@@ -38,6 +38,6 @@ public class Partenaire implements Serializable {
 	private Date dateCreation;
 	private String description;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="partenaireOffre")
-	private Set<Offre> lesOffres;
+	private Set<Offre> listeOffres;
 
 }
