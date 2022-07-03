@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,4 +30,11 @@ public class Ratting implements Serializable {
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private Long idRatting;
 	private Long note;
+	@ManyToOne
+	@JoinColumn(name="fk_id_event")
+	private Evenement eventRatting;
+	@ManyToOne
+	@JoinColumn(name="fk_id_offre")
+	private Offre offreRatting;
+	
 }
