@@ -4,14 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,22 +21,20 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Evenement implements Serializable {
+public class Ratting implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
-	private Long idEvent;
-	@Temporal(TemporalType.DATE)
-	private Date dateDebut;
-	private String libelle;
-	private Long duree;
-	private String emplacement;
-	@Temporal(TemporalType.DATE)
-	private Date dateCreation;
-	private String description;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="eventRatting")
-	private Set<Ratting> listRattingEvnt;
+	private Long idRatting;
+	private Long note;
+	@ManyToOne
+	@JoinColumn(name="fk_id_event")
+	private Evenement eventRatting;
+	@ManyToOne
+	@JoinColumn(name="fk_id_offre")
+	private Offre offreRatting;
+	
 }
