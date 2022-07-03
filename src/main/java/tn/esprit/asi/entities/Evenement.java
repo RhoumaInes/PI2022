@@ -2,11 +2,14 @@ package tn.esprit.asi.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -36,4 +39,6 @@ public class Evenement implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dateCreation;
 	private String description;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="eventRatting")
+	private Set<Ratting> listRattingEvnt;
 }
