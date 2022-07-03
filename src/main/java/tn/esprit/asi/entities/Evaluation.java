@@ -10,12 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-
 import lombok.AllArgsConstructor;
 
 @Entity
 @AllArgsConstructor
-public class Ratting implements Serializable {
+public class Evaluation implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -40,7 +39,7 @@ public class Ratting implements Serializable {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	public Ratting() {
+	public Evaluation() {
 		super();
 	}
 }
