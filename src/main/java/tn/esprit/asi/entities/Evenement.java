@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,5 +42,6 @@ public class Evenement implements Serializable {
 	private Date dateCreation;
 	private String description;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="eventRatting")
+	@JsonIgnore
 	private Set<Ratting> listRattingEvnt;
 }
