@@ -3,7 +3,6 @@ package tn.esprit.asi.entities;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,26 +15,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
-public class Like implements Serializable{/**
-	 * 
-	 */
+public class ToLike implements Serializable{
+
+
 	private static final long serialVersionUID = 1L;
-	
-	@Id  // cle primaire 
+	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long idLike;
+    private Long idLk;
 	@Temporal(TemporalType.DATE)
-	private Date Date;
-	private Boolean Statut;
+	private Date dateLk;
+	private Boolean statut;
 	
 	@ManyToOne
-	Commentaire Commentaire;
+	Commentaire commentaire;
 	
-	@Column(name="Publication")
-	private String Publication;
-	
+	@ManyToOne
+	PublicationForum publication;
+
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,15 +35,17 @@ public class PublicationForum implements Serializable {/**
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long idPub;
 	@Temporal(TemporalType.DATE)
-	private Date Date;
+	private Date date;
 	private String intitule;
 	private String theme;
 	private String contenu;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="Publication")
-	private Set<Commentaire> Commentaire;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="publication")
+	private Set<Commentaire> commentaire;
 	
-	@OneToMany(cascade = CascadeType.ALL)
-	private Set<Like> Likes;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="publication")
+	private Set<ToLike> Tolikes;
+	
+	
 
 }

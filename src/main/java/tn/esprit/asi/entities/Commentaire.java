@@ -32,16 +32,18 @@ public class Commentaire implements Serializable{/**
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long idCom;
 	@Temporal(TemporalType.DATE)
-	private Date Date;
+	private Date dateCom;
 	private String contenu;
 	
 	@ManyToOne
-	PublicationForum Publication;
+	PublicationForum publication;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="Commentaire")
-	private Set<Like> Likes;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="commentaire")
+	private Set<ToLike> listlikes;
 	
-	@OneToMany(cascade = CascadeType.REMOVE)
-	private Set<Commentaire> Commentaire; //?????
+	@OneToMany(cascade = CascadeType.ALL)
+	private Set<Commentaire> comments; // c bn 
+
+	
 
 }
