@@ -42,10 +42,12 @@ public class Evenement implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dateCreation;
 	private String description;
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="eventRatting")
 	@JsonIgnore
 	private Set<Ratting> listRattingEvnt;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
+	@JsonIgnore
 	private Set<User> participation;
 }

@@ -2,34 +2,26 @@ package tn.esprit.asi.entities;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Badge implements Serializable {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private Boolean isTrophy;
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public Boolean getIsTrophy() {
-		return isTrophy;
-	}
-	public void setIsTrophy(Boolean isTrophy) {
-		this.isTrophy = isTrophy;
-	}
-	public Badge() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
+
+	@OneToOne
+	@JsonIgnore
+	private User IDUser;
 }

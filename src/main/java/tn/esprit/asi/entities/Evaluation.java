@@ -2,18 +2,18 @@ package tn.esprit.asi.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
+import java.util.Set;
+import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @AllArgsConstructor
+@Getter
+@Setter
 public class Evaluation implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,25 +21,12 @@ public class Evaluation implements Serializable {
 	private Integer note;
 	@Temporal(TemporalType.DATE)
 	private Date date;
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public Integer getNote() {
-		return note;
-	}
-	public void setNote(Integer note) {
-		this.note = note;
-	}
-	public Date getDate() {
-		return date;
-	}
-	public void setDate(Date date) {
-		this.date = date;
-	}
-	public Evaluation() {
-		super();
-	}
+
+	@OneToMany
+	@JsonIgnore
+	private User IDUserTo;
+
+	@OneToMany
+	@JsonIgnore
+	private User IDUserFrom;
 }
