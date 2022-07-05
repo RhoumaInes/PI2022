@@ -1,15 +1,16 @@
 package tn.esprit.asi.entities;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,11 +31,19 @@ public class Ratting implements Serializable {
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private Long idRatting;
 	private Long note;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="fk_id_event")
+	@JsonIgnore
 	private Evenement eventRatting;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="fk_id_offre")
+	@JsonIgnore
 	private Offre offreRatting;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JsonIgnore
+	private User userRatting;
+	
+	
 	
 }

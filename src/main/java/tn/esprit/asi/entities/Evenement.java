@@ -9,9 +9,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,5 +43,9 @@ public class Evenement implements Serializable {
 	private Date dateCreation;
 	private String description;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="eventRatting")
+	@JsonIgnore
 	private Set<Ratting> listRattingEvnt;
+	
+	@ManyToMany(cascade = CascadeType.ALL)
+	private Set<User> participation;
 }
