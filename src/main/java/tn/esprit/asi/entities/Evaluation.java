@@ -12,9 +12,11 @@ import lombok.Setter;
 
 @Entity
 @AllArgsConstructor
-@Getter
-@Setter
+@NoArgsConstructor
 public class Evaluation implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -22,11 +24,50 @@ public class Evaluation implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date date;
 
-	@OneToMany
-	@JsonIgnore
-	private User IDUserTo;
+	@ManyToOne(cascade=CascadeType.ALL)
+	private User userTo;
 
-	@OneToMany
-	@JsonIgnore
-	private User IDUserFrom;
+	@ManyToOne(cascade=CascadeType.ALL)
+	private User userFrom;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getNote() {
+		return note;
+	}
+
+	public void setNote(Integer note) {
+		this.note = note;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public User getUserTo() {
+		return userTo;
+	}
+
+	public void setUserTo(User userTo) {
+		this.userTo = userTo;
+	}
+
+	public User getUserFrom() {
+		return userFrom;
+	}
+
+	public void setUserFrom(User userFrom) {
+		this.userFrom = userFrom;
+	}
+	
 }
