@@ -1,5 +1,7 @@
 package tn.esprit.asi.Utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
@@ -9,6 +11,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Random;
 
+@Slf4j
 public class PasswordUtils {
 
     private static final Random RANDOM = new SecureRandom();
@@ -20,14 +23,16 @@ public class PasswordUtils {
     private static byte[] hash(char[] password) {
         PBEKeySpec spec = new PBEKeySpec(password, SALT.getBytes(), ITERATIONS, KEY_LENGTH);
         Arrays.fill(password, Character.MIN_VALUE);
+        byte key[] = null;
         try {
-            SecretKeyFactory skf = SecretKeyFactory.getInstance("SKByAjHmacSHA1");
-            return skf.generateSecret(spec).getEncoded();
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new AssertionError("Error while hashing a password: " + e.getMessage(), e);
+            SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            key = skf.generateSecret(spec).getEncoded();
+        } catch (Exception e) {
+            log.error(e.getMessage());
         } finally {
             spec.clearPassword();
         }
+        return key;
     }
 
     public static String generateSecurePassword(String password) {

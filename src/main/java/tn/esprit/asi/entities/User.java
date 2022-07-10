@@ -58,10 +58,12 @@ public class User implements Serializable {
     @JsonIgnore
     private String EmailVerifyKey;
     @Temporal(TemporalType.DATE)
+    @JsonIgnore
     private Date DateEmailVerifyKey;
     @JsonIgnore
     private String PasswordResetKey;
     @Temporal(TemporalType.DATE)
+    @JsonIgnore
     private Date DatePasswordResetKey;
 
     @OneToOne
