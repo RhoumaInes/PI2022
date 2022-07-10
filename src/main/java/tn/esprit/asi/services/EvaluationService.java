@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import tn.esprit.asi.entities.Evaluation;
+import tn.esprit.asi.entities.User;
 
 public interface EvaluationService {
 	Long addEval(Evaluation eval);
@@ -11,4 +12,6 @@ public interface EvaluationService {
 	Long updateEval (Evaluation eval);
 	
 	List<Evaluation> getEvals();
+	
+	Long countEvalByUserTo(User userTo);
 }
