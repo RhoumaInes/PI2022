@@ -5,14 +5,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import tn.esprit.asi.entities.Evaluation;
+import tn.esprit.asi.entities.Badge;
 import tn.esprit.asi.entities.User;
 
 @Repository
-public interface EvaluationRepo extends JpaRepository<Evaluation, Long> {
+public interface BadgeRepo extends JpaRepository<Badge, Long>{
 	
-	@Query("Select "
-			+ "count(DISTINCT e) from Evaluation e "
-			+ "where e.userTo=:userTo ")
-	public Long countEvalByUserTo(@Param("userTo")User userTo);
+	@Query("SELECT b FROM Badge b WHERE b.relatedToUser= :user")
+	public Badge retrieveBadgeByUser(@Param("user") User user);
 }

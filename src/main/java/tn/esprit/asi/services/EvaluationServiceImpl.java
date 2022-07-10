@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import tn.esprit.asi.entities.Evaluation;
+import tn.esprit.asi.entities.User;
 import tn.esprit.asi.reposetories.EvaluationRepo;
 
 @Service
@@ -36,6 +37,11 @@ public class EvaluationServiceImpl implements EvaluationService {
 	@Override
 	public List<Evaluation> getEvals() {
 		return evalRepo.findAll();
+	}
+
+	@Override
+	public Long countEvalByUserTo(User userTo) {
+		return evalRepo.countEvalByUserTo(userTo);
 	}
 
 }
