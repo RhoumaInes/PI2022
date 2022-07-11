@@ -17,26 +17,12 @@ public class UserRoleService implements IUserRoleService {
 
     @Override
     public boolean CreateRole(UserRole userRole) {
-        boolean returnedValue = true;
-
-        try {
-            userRoleRep.save(userRole);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            returnedValue = false;
-        }
-
-        return returnedValue;
+        userRoleRep.save(userRole);
+        return true;
     }
 
     @Override
     public List<UserRole> roleList() {
-        List<UserRole> reternedValue = null;
-        try {
-            reternedValue = (List<UserRole>) userRoleRep.findAll();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return reternedValue;
+        return (List<UserRole>) userRoleRep.findAll();
     }
 }

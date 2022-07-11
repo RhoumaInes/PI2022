@@ -4,23 +4,23 @@ import tn.esprit.asi.entities.User;
 
 public interface IUserService {
 
-    boolean CreateUser(User user, String URL);
+    boolean CreateUser(User user, String URL) throws Exception;
 
-    boolean UpdateUser(User user);
+    boolean UpdateUser(User user) throws Exception;
 
-    boolean ToSignInUser(String UserName, String Password);
+    User ToSignInUser(String Login, String Password) throws Exception;
 
-    boolean AlterUserName(Long IDUser, String UserName, String Password);
+    boolean AlterUserName(Long IDUser, String UserName, String Password) throws Exception;
 
-    boolean AlterEmail(Long IDUser, String Email, String Password);
+    boolean AlterEmail(Long IDUser, String Email, String Password) throws Exception;
 
-    boolean AlterPassword(Long IDUser, String NewPassword, String Password);
+    boolean AlterPassword(Long IDUser, String NewPassword, String Password) throws Exception;
 
-    boolean ValidateEmail(String key);
+    boolean ValidateEmail(String key) throws Exception;
 
-    boolean TryToResetPassword(String Email, String URL);
+    boolean TryToResetPassword(String Email, String URL) throws Exception;
 
-    public boolean ResetPassword(String NewPassword, String key);
+    public boolean ResetPassword(String NewPassword, String key) throws Exception;
 
     public User fetchUserByID(Long IDUser);
 }

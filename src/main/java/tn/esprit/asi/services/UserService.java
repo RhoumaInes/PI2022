@@ -12,9 +12,7 @@ import tn.esprit.asi.entities.User;
 import tn.esprit.asi.entities.UserState;
 import tn.esprit.asi.reposetories.UserRepo;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 @Service
@@ -27,159 +25,111 @@ public class UserService implements IUserService {
     private JavaMailSender mailSender;
 
     @Override
-    public boolean CreateUser(User user, String URL) {
-        boolean returnedValue = true;
+    public boolean CreateUser(User user, String URL) throws Exception {
+        //Remove space from username if exist
+        user.setUserName(user.getUserName().replaceAll("\\s+", ""));
 
-        try {
-            //Remove space from username if exist
-            user.setUserName(user.getUserName().replaceAll("\\s+", ""));
+        if (!EmailValidator.getInstance().isValid(user.getEmail()))
+            throw new Exception("Invalid Email");
 
-            if (!EmailValidator.getInstance().isValid(user.getEmail()))
-                throw new Exception("Invalid Email");
+        if (userRepo.FindUserByUserName(user.getUserName()) != null || userRepo.FindUserByEmail(user.getEmail()) != null)
+            throw new Exception("User Exist");
 
-            if (userRepo.FindUserByUserName(user.getUserName()) != null || userRepo.FindUserByEmail(user.getEmail()) != null)
-                throw new Exception("User Exist");
+        String randomCode = RandomString.make(64);
+        user.setEmailVerifyKey(randomCode);
+        user.setDateEmailVerifyKey(new Date());
 
-            String randomCode = RandomString.make(64);
-            user.setEmailVerifyKey(randomCode);
-            user.setDateEmailVerifyKey(new Date());
+        String ecryptedPass = PasswordUtils.generateSecurePassword(user.getPassword());
+        user.setEncryPassword(ecryptedPass);
 
-            String ecryptedPass = PasswordUtils.generateSecurePassword(user.getPassword());
-            user.setEncryPassword(ecryptedPass);
+        Date dd = new Date();
+        user.setDateInsertion(dd);
+        user.setDateModification(dd);
 
-            Date dd = new Date();
-            user.setDateInsertion(dd);
-            user.setDateModification(dd);
+        user.setEtat(UserState.UNACTIVATED);
 
-            user.setEtat(UserState.UNACTIVATED);
+        userRepo.save(user);
+        sendVerificationEmail(user, URL);
 
-            userRepo.save(user);
-            sendVerificationEmail(user, URL);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            returnedValue = false;
-        }
-
-        return returnedValue;
+        return true;
     }
 
     @Override
-    public boolean UpdateUser(User user) {
-        boolean returnedValue = true;
+    public boolean UpdateUser(User user) throws Exception {
+        //Remove space from username if exist
+        user.setUserName(user.getUserName().replaceAll("\\s+", ""));
 
-        try {
-            //Remove space from username if exist
-            user.setUserName(user.getUserName().replaceAll("\\s+", ""));
+        User userSaved = userRepo.FindUserByUnique(user.getIDUser(), user.getUserName(), user.getEmail());
+        if (userSaved == null) throw new Exception("User Invalid");
 
-            User userSaved = userRepo.FindUserByUnique(user.getIDUser(), user.getUserName(), user.getEmail());
-            if (userSaved == null) throw new Exception("User Invalid");
+        userSaved.setAge(user.getAge());
+        userSaved.setDateNaissance(user.getDateNaissance());
+        userSaved.setNom(user.getNom());
+        userSaved.setPrenom(user.getPrenom());
+        userSaved.setPays(user.getPays());
+        userSaved.setPosteActuel(user.getPosteActuel());
+        userSaved.setSecteur(user.getSecteur());
+        userSaved.setTitreProfile(user.getTitreProfile());
+        userSaved.setVille(user.getVille());
 
-            userSaved.setAge(user.getAge());
-            userSaved.setDateNaissance(user.getDateNaissance());
-            userSaved.setNom(user.getNom());
-            userSaved.setPrenom(user.getPrenom());
-            userSaved.setPays(user.getPays());
-            userSaved.setPosteActuel(user.getPosteActuel());
-            userSaved.setSecteur(user.getSecteur());
-            userSaved.setTitreProfile(user.getTitreProfile());
-            userSaved.setVille(user.getVille());
+        Date dd = new Date();
+        userSaved.setDateModification(dd);
 
-            Date dd = new Date();
-            userSaved.setDateModification(dd);
+        userRepo.save(userSaved);
 
-            userRepo.save(userSaved);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            returnedValue = false;
-        }
-
-        return returnedValue;
+        return true;
     }
 
     @Override
-    public boolean ToSignInUser(String UserName, String Password) {
-        boolean returnedValue = true;
+    public User ToSignInUser(String Login, String Password) throws Exception {
+        User user = userRepo.FindUserByLogin(Login);
+        if (user == null) throw new Exception("Invalid User");
+        if (!PasswordUtils.verifyUserPassword(Password, user.getEncryPassword()))
+            throw new Exception("Invalid User");
 
-        try {
-
-            User user = userRepo.FindUserByUserName(UserName);
-            if (user == null) throw new Exception("Invalid User");
-            if (!PasswordUtils.verifyUserPassword(Password, user.getEncryPassword()))
-                throw new Exception("Invalid User");
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            returnedValue = false;
-        }
-
-        return returnedValue;
+        return user;
     }
 
     @Override
-    public boolean AlterUserName(Long IDUser, String UserName, String Password) {
-        boolean returnedValue = true;
+    public boolean AlterUserName(Long IDUser, String UserName, String Password) throws Exception {
 
-        try {
+        User user = userRepo.findById(IDUser).orElse(null);
+        if (user == null) throw new Exception("Invalid User");
+        if (!PasswordUtils.verifyUserPassword(Password, user.getEncryPassword()))
+            throw new Exception("Invalid User");
+        user.setUserName(UserName);
+        userRepo.save(user);
 
-            User user = userRepo.findById(IDUser).orElse(null);
-            if (user == null) throw new Exception("Invalid User");
-            if (!PasswordUtils.verifyUserPassword(Password, user.getEncryPassword()))
-                throw new Exception("Invalid User");
-            user.setUserName(UserName);
-            userRepo.save(user);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            returnedValue = false;
-        }
-
-        return returnedValue;
+        return true;
     }
 
     @Override
-    public boolean AlterEmail(Long IDUser, String Email, String Password) {
-        boolean returnedValue = true;
+    public boolean AlterEmail(Long IDUser, String Email, String Password) throws Exception {
 
-        try {
+        User user = userRepo.findById(IDUser).orElse(null);
+        if (user == null) throw new Exception("Invalid User");
+        if (!PasswordUtils.verifyUserPassword(Password, user.getEncryPassword()))
+            throw new Exception("Invalid User");
+        if (!EmailValidator.getInstance().isValid(Email)) throw new Exception("Invalid Email");
+        user.setEmail(Email);
+        userRepo.save(user);
 
-            User user = userRepo.findById(IDUser).orElse(null);
-            if (user == null) throw new Exception("Invalid User");
-            if (!PasswordUtils.verifyUserPassword(Password, user.getEncryPassword()))
-                throw new Exception("Invalid User");
-            if (!EmailValidator.getInstance().isValid(Email)) throw new Exception("Invalid Email");
-            user.setEmail(Email);
-            userRepo.save(user);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            returnedValue = false;
-        }
-
-        return returnedValue;
+        return true;
     }
 
     @Override
-    public boolean AlterPassword(Long IDUser, String NewPassword, String Password) {
-        boolean returnedValue = true;
+    public boolean AlterPassword(Long IDUser, String NewPassword, String Password) throws Exception {
 
-        try {
+        User user = userRepo.findById(IDUser).orElse(null);
+        if (user == null) throw new Exception("Invalid User");
+        if (!PasswordUtils.verifyUserPassword(Password, user.getEncryPassword()))
+            throw new Exception("Invalid User");
+        String ecryptedPass = PasswordUtils.generateSecurePassword(NewPassword);
+        user.setEncryPassword(ecryptedPass);
+        //Disconnect all devices
+        userRepo.save(user);
 
-            User user = userRepo.findById(IDUser).orElse(null);
-            if (user == null) throw new Exception("Invalid User");
-            if (!PasswordUtils.verifyUserPassword(Password, user.getEncryPassword()))
-                throw new Exception("Invalid User");
-            String ecryptedPass = PasswordUtils.generateSecurePassword(NewPassword);
-            user.setEncryPassword(ecryptedPass);
-            //Disconnect all devices
-            userRepo.save(user);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            returnedValue = false;
-        }
-
-        return returnedValue;
+        return true;
     }
 
     private void sendVerificationEmail(User user, String URL) {
@@ -209,54 +159,38 @@ public class UserService implements IUserService {
         }
     }
 
-    public boolean ValidateEmail(String key) {
-        boolean returnedValue = true;
+    public boolean ValidateEmail(String key) throws Exception {
+        User user = userRepo.FindUserByEmailVerifyKey(key);
+        if (user == null) throw new Exception("Invalid User");
+        final int MILLI_TO_HOUR = 1000 * 60 * 60;
+        if ((new Date().getTime() - user.getDateEmailVerifyKey().getTime()) / MILLI_TO_HOUR > 1)
+            throw new Exception("Expired");
 
-        try {
+        user.setEmailVerifyKey(null);
+        user.setDateEmailVerifyKey(null);
 
-            User user = userRepo.FindUserByEmailVerifyKey(key);
-            if (user == null) throw new Exception("Invalid User");
-            final int MILLI_TO_HOUR = 1000 * 60 * 60;
-            if ((new Date().getTime() - user.getDateEmailVerifyKey().getTime()) / MILLI_TO_HOUR > 1)
-                throw new Exception("Expired");
+        user.setEtat(UserState.ACTIVATED);
+        user.setDateModification(new Date());
+        userRepo.save(user);
 
-            user.setEmailVerifyKey(null);
-            user.setDateEmailVerifyKey(null);
-
-            user.setEtat(UserState.ACTIVATED);
-            user.setDateModification(new Date());
-            userRepo.save(user);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            returnedValue = false;
-        }
-
-        return returnedValue;
+        return true;
     }
 
-    public boolean TryToResetPassword(String Email, String URL) {
-        boolean returnedValue = true;
+    public boolean TryToResetPassword(String Email, String URL) throws Exception {
 
-        try {
+        if (!EmailValidator.getInstance().isValid(Email)) throw new Exception("Invalid Email");
 
-            if (!EmailValidator.getInstance().isValid(Email)) throw new Exception("Invalid Email");
+        User user = userRepo.FindActiveUserByEmail(Email);
+        if (user == null) throw new Exception("Invalid User");
 
-            User user = userRepo.FindActiveUserByEmail(Email);
-            if (user == null) throw new Exception("Invalid User");
+        String randomCode = RandomString.make(64);
+        user.setPasswordResetKey(randomCode);
+        user.setDatePasswordResetKey(new Date());
 
-            String randomCode = RandomString.make(64);
-            user.setPasswordResetKey(randomCode);
-            user.setDatePasswordResetKey(new Date());
+        userRepo.save(user);
+        sendResetEmail(user, URL);
 
-            userRepo.save(user);
-            sendResetEmail(user, URL);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            returnedValue = false;
-        }
-
-        return returnedValue;
+        return true;
     }
 
     private void sendResetEmail(User user, String URL) {
@@ -286,32 +220,20 @@ public class UserService implements IUserService {
         }
     }
 
-    public boolean ResetPassword(String NewPassword, String key) {
-        boolean returnedValue = true;
+    public boolean ResetPassword(String NewPassword, String key) throws Exception {
 
-        try {
+        User user = userRepo.FindActiveUserByPasswordkey(key);
+        if (user == null) throw new Exception("Invalid User");
+        String ecryptedPass = PasswordUtils.generateSecurePassword(NewPassword);
+        user.setEncryPassword(ecryptedPass);
+        user.setDateModification(new Date());
+        userRepo.save(user);
 
-            User user = userRepo.FindActiveUserByPasswordkey(key);
-            if (user == null) throw new Exception("Invalid User");
-            String ecryptedPass = PasswordUtils.generateSecurePassword(NewPassword);
-            user.setEncryPassword(ecryptedPass);
-            user.setDateModification(new Date());
-            userRepo.save(user);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            returnedValue = false;
-        }
-
-        return returnedValue;
+        return true;
     }
 
     public User fetchUserByID(Long IDUser) {
-        try {
-            return userRepo.findById(IDUser).orElse(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return null;
+        return userRepo.findById(IDUser).orElse(null);
     }
 
 }

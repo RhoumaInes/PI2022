@@ -4,8 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.asi.Utils.BodyResponse;
+import tn.esprit.asi.Utils.ResetPassword;
 import tn.esprit.asi.Utils.ResponseStatus;
+import tn.esprit.asi.Utils.SignIn;
 import tn.esprit.asi.entities.User;
+import tn.esprit.asi.entities.UserState;
 import tn.esprit.asi.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,4 +61,100 @@ public class UserController {
 
         return body;
     }
+
+    @GetMapping("/verify")
+    @ResponseBody
+    public BodyResponse<Boolean> verifyEmail(@PathVariable("key") String key) {
+        BodyResponse<Boolean> body = new BodyResponse<>();
+        try {
+            body.setData(userService.ValidateEmail(key));
+            body.setMessage("validated");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @GetMapping("/fetchbyid/{id}")
+    @ResponseBody
+    public BodyResponse<User> fetchUser(@PathVariable("id") Long IDUser) {
+        BodyResponse<User> body = new BodyResponse<>();
+        try {
+            body.setData(userService.fetchUserByID(IDUser));
+            body.setMessage("ready");
+            body.setStatus(ResponseStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(null);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @GetMapping("/tryresetpassword/{email}")
+    @ResponseBody
+    public BodyResponse<Boolean> TryToResetPassword(@PathVariable("email") String email, HttpServletRequest request) {
+        BodyResponse<Boolean> body = new BodyResponse<>();
+        try {
+            body.setData(userService.TryToResetPassword(email, ""));
+            body.setMessage("reset send");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @PostMapping("/resetpassword")
+    @ResponseBody
+    public BodyResponse<Boolean> resetPassword(@RequestBody ResetPassword rs) {
+        BodyResponse<Boolean> body = new BodyResponse<>();
+        try {
+            body.setData(userService.ResetPassword(rs.getPassword(), rs.getKey()));
+            body.setMessage("reset complete");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @PostMapping("/signin")
+    @ResponseBody
+    public BodyResponse<Boolean> signin(@RequestBody SignIn signIn) {
+        BodyResponse<Boolean> body = new BodyResponse<>();
+        try {
+            body.setStatus(ResponseStatus.UNACTIVATED);
+            User user = userService.ToSignInUser(signIn.getLogin(), signIn.getPassword());
+            if (user.getEtat() == UserState.ACTIVATED)
+                body.setStatus(ResponseStatus.ACTIVATED);
+
+            body.setData(true);
+            body.setMessage("user verified");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+
 }
