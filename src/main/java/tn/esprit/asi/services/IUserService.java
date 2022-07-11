@@ -6,6 +6,8 @@ public interface IUserService {
 
     boolean CreateUser(User user, String URL) throws Exception;
 
+    boolean CreateAdmin(User user) throws Exception;
+
     boolean UpdateUser(User user) throws Exception;
 
     User ToSignInUser(String Login, String Password) throws Exception;

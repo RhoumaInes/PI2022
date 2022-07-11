@@ -5,7 +5,7 @@ import tn.esprit.asi.entities.UserRole;
 import java.util.List;
 
 public interface IUserRoleService {
-    boolean CreateRole(UserRole userRole);
+    UserRole CreateRole(UserRole userRole);
 
     List<UserRole> roleList();
 }

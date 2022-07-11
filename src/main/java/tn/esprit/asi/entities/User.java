@@ -1,6 +1,7 @@
 package tn.esprit.asi.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class User implements Serializable {
 
@@ -68,4 +70,19 @@ public class User implements Serializable {
 
     @OneToOne
     private UserRole UserRole;
+
+    public User(String userName, String email, String password, String nom, String prenom, int age, Date dateNaissance, String titreProfile, String posteActuel, String secteur, String pays, String ville) {
+        UserName = userName;
+        Email = email;
+        Password = password;
+        Nom = nom;
+        Prenom = prenom;
+        Age = age;
+        DateNaissance = dateNaissance;
+        TitreProfile = titreProfile;
+        PosteActuel = posteActuel;
+        Secteur = secteur;
+        Pays = pays;
+        Ville = ville;
+    }
 }

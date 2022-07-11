@@ -16,9 +16,8 @@ public class UserRoleService implements IUserRoleService {
     UserRoleRepo userRoleRep;
 
     @Override
-    public boolean CreateRole(UserRole userRole) {
-        userRoleRep.save(userRole);
-        return true;
+    public UserRole CreateRole(UserRole userRole) {
+        return userRoleRep.save(userRole);
     }
 
     @Override

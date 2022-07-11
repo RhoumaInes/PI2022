@@ -9,6 +9,7 @@ import tn.esprit.asi.Utils.ResponseStatus;
 import tn.esprit.asi.Utils.SignIn;
 import tn.esprit.asi.entities.User;
 import tn.esprit.asi.entities.UserState;
+import tn.esprit.asi.services.IUserService;
 import tn.esprit.asi.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
 
     @Autowired
-    UserService userService;
+    IUserService userService;
 
     @PostMapping("/create")
     @ResponseBody

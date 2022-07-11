@@ -54,6 +54,34 @@ public class UserService implements IUserService {
         return true;
     }
 
+    public boolean CreateAdmin(User user) throws Exception {
+        //Remove space from username if exist
+        user.setUserName(user.getUserName().replaceAll("\\s+", ""));
+
+        if (!EmailValidator.getInstance().isValid(user.getEmail()))
+            throw new Exception("Invalid Email");
+
+        if (userRepo.FindUserByUserName(user.getUserName()) != null || userRepo.FindUserByEmail(user.getEmail()) != null)
+            throw new Exception("User Exist");
+
+        String randomCode = RandomString.make(64);
+        user.setEmailVerifyKey(randomCode);
+        user.setDateEmailVerifyKey(new Date());
+
+        String ecryptedPass = PasswordUtils.generateSecurePassword(user.getPassword());
+        user.setEncryPassword(ecryptedPass);
+
+        Date dd = new Date();
+        user.setDateInsertion(dd);
+        user.setDateModification(dd);
+
+        user.setEtat(UserState.ACTIVATED);
+
+        userRepo.save(user);
+
+        return true;
+    }
+
     @Override
     public boolean UpdateUser(User user) throws Exception {
         //Remove space from username if exist
