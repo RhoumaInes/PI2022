@@ -13,7 +13,9 @@ import java.util.Date;
 
 
 @NoArgsConstructor
-
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 public class User implements Serializable {
 
