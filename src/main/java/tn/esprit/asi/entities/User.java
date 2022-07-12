@@ -36,7 +36,7 @@ public class User implements Serializable {
     private String Password;
     @Column(nullable = false, name = "Password")
     @JsonIgnore
-    @JsonProperty("encrypassword")
+    //@JsonProperty("encrypassword")
     private String EncryPassword;
     @Column(nullable = false)
     @JsonProperty("nom")
@@ -63,31 +63,31 @@ public class User implements Serializable {
     private String Ville;
     @Enumerated(EnumType.STRING)
     @JsonIgnore
-    @JsonProperty("etat")
+    //@JsonProperty("etat")
     private UserState Etat;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     @JsonIgnore
-    @JsonProperty("dateinsertion")
+    //@JsonProperty("dateinsertion")
     private Date DateInsertion;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     @JsonIgnore
-    @JsonProperty("datemodification")
+    //@JsonProperty("datemodification")
     private Date DateModification;
     @JsonIgnore
-    @JsonProperty("emailverifykey")
+    //@JsonProperty("emailverifykey")
     private String EmailVerifyKey;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @JsonIgnore
-    @JsonProperty("dateemailverifykey")
+    //@JsonProperty("dateemailverifykey")
     private Date DateEmailVerifyKey;
+    //@JsonProperty(value = "passwordresetKey")
     @JsonIgnore
-    @JsonProperty("passwordresetKey")
     private String PasswordResetKey;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @JsonIgnore
-    @JsonProperty("datepasswordresetKey")
+    //@JsonProperty("datepasswordresetKey")
     private Date DatePasswordResetKey;
 
     @OneToOne
