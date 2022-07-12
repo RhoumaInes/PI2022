@@ -23,5 +23,5 @@ public class Badge implements Serializable {
 
 	@OneToOne
 	@JsonIgnore
-	private User IDUser;
+	private User relatedToUser;
 }

@@ -13,14 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClientResponseException;
 
 import io.swagger.annotations.Api;
-import io.swagger.models.Response;
 import tn.esprit.asi.entities.Evaluation;
 import tn.esprit.asi.entities.User;
 import tn.esprit.asi.reposetories.UserRepo;
-import tn.esprit.asi.services.EvaluationService;
 import tn.esprit.asi.services.EvaluationServiceImpl;
 
 
@@ -63,6 +60,13 @@ public class EvaluationController {
 	public List<Evaluation> listOfEvaluations() {
 		
 		return  evaluationService.getEvals();
+	}
+	
+	@GetMapping("/countEvalByUserTo")
+	@ResponseBody
+	public Long countEvalByUserTo(@RequestBody User userTo) {
+		
+		return  evaluationService.countEvalByUserTo(userTo);
 	}
 
 }
