@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tn.esprit.asi.entities.User;
-import tn.esprit.asi.entities.UserState;
+
 
 @Repository
 public interface UserRepo extends CrudRepository<User, Long> {
