@@ -20,7 +20,7 @@ import tn.esprit.asi.services.UserService;
 
 import java.util.Date;
 
-//@EnableSwagger2
+@EnableSwagger2
 @EnableScheduling
 @SpringBootApplication
 //@Configuration

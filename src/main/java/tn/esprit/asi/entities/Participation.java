@@ -2,15 +2,13 @@ package tn.esprit.asi.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -24,32 +22,30 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class Evenement implements Serializable {
+@NoArgsConstructor
+public class Participation implements Serializable {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
-	private Long idEvent;
+	private Long idParticip;
+	private Boolean status;
+	private Boolean annulation;
+	private Float montantPaye;
 	@Temporal(TemporalType.DATE)
-	private Date dateDebut;
-	private String libelle;
-	private Long duree;
-	private String emplacement;
+	private Date dateLastPaye;
 	@Temporal(TemporalType.DATE)
-	private Date dateCreation;
-	private String description;
-	private Float prixEvent;
-	private Long maxNumberPlaces;
-
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="eventRatting")
-	@JsonIgnore
-	private Set<Ratting> listRattingEvnt;
+	private Date dateParticipation;
 	
-	/*@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JsonIgnore
-	private Set<Participation> participation;*/
+	private Evenement evenementPart;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JsonIgnore
+	private User userPart;
 }
