@@ -1,6 +1,7 @@
 package tn.esprit.asi.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,54 +22,76 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("idUser")
     private Long IDUser;
     @Column(nullable = false, unique = true, length = 50)
+    @JsonProperty("username")
     private String UserName;
     @Column(nullable = false, unique = true)
+    @JsonProperty("email")
     private String Email;
     @Transient
-    @JsonIgnore
+    //@JsonIgnore
+    @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
     private String Password;
     @Column(nullable = false, name = "Password")
     @JsonIgnore
+    @JsonProperty("encrypassword")
     private String EncryPassword;
     @Column(nullable = false)
+    @JsonProperty("nom")
     private String Nom;
     @Column(nullable = false)
+    @JsonProperty("prenom")
     private String Prenom;
     @Column(nullable = false)
+    @JsonProperty("age")
     private int Age;
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
+    @JsonProperty("datenaissance")
     private Date DateNaissance;
+    @JsonProperty("titreprofile")
     private String TitreProfile;
+    @JsonProperty("posteactuel")
     private String PosteActuel;
+    @JsonProperty("secteur")
     private String Secteur;
+    @JsonProperty("pays")
     private String Pays;
+    @JsonProperty("ville")
     private String Ville;
     @Enumerated(EnumType.STRING)
     @JsonIgnore
+    @JsonProperty("etat")
     private UserState Etat;
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     @JsonIgnore
+    @JsonProperty("dateinsertion")
     private Date DateInsertion;
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     @JsonIgnore
+    @JsonProperty("datemodification")
     private Date DateModification;
     @JsonIgnore
+    @JsonProperty("emailverifykey")
     private String EmailVerifyKey;
     @Temporal(TemporalType.DATE)
     @JsonIgnore
+    @JsonProperty("dateemailverifykey")
     private Date DateEmailVerifyKey;
     @JsonIgnore
+    @JsonProperty("passwordresetKey")
     private String PasswordResetKey;
     @Temporal(TemporalType.DATE)
     @JsonIgnore
+    @JsonProperty("datepasswordresetKey")
     private Date DatePasswordResetKey;
 
     @OneToOne
+    @JsonProperty("userrole")
     private UserRole UserRole;
 
     public User(String userName, String email, String password, String nom, String prenom, int age, Date dateNaissance, String titreProfile, String posteActuel, String secteur, String pays, String ville) {

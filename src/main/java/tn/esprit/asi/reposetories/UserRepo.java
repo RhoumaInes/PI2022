@@ -13,7 +13,7 @@ public interface UserRepo extends CrudRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.UserName = :UserName")
     public User FindUserByUserName(@Param("UserName") String UserName);
 
-    @Query("SELECT u FROM User u WHERE u.UserName = :UserName OR u.Email=:login")
+    @Query("SELECT u FROM User u WHERE u.UserName = :login OR u.Email=:login")
     public User FindUserByLogin(@Param("login") String login);
 
     @Query("SELECT u FROM User u WHERE u.Email = :Email")

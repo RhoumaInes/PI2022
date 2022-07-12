@@ -2,6 +2,7 @@ package tn.esprit.asi.control;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.asi.Utils.BodyResponse;
 import tn.esprit.asi.Utils.ResetPassword;
@@ -27,7 +28,8 @@ public class UserController {
     public BodyResponse<Boolean> createUser(@RequestBody User user, HttpServletRequest request) {
         BodyResponse<Boolean> body = new BodyResponse<>();
         try {
-            body.setData(userService.CreateUser(user, getSiteURL(request)));
+            log.info("user ", user);
+            body.setData(userService.CreateUser(user, getSiteURL(request) + "/user"));
             body.setMessage("created");
             body.setStatus(ResponseStatus.DONE);
         } catch (Exception e) {
@@ -65,7 +67,7 @@ public class UserController {
 
     @GetMapping("/verify")
     @ResponseBody
-    public BodyResponse<Boolean> verifyEmail(@PathVariable("key") String key) {
+    public BodyResponse<Boolean> verifyEmail(@RequestParam("key") String key) {
         BodyResponse<Boolean> body = new BodyResponse<>();
         try {
             body.setData(userService.ValidateEmail(key));
@@ -140,6 +142,7 @@ public class UserController {
     public BodyResponse<Boolean> signin(@RequestBody SignIn signIn) {
         BodyResponse<Boolean> body = new BodyResponse<>();
         try {
+            log.info("login", signIn);
             body.setStatus(ResponseStatus.UNACTIVATED);
             User user = userService.ToSignInUser(signIn.getLogin(), signIn.getPassword());
             if (user.getEtat() == UserState.ACTIVATED)

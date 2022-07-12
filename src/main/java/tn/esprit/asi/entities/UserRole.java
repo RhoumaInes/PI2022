@@ -1,5 +1,6 @@
 package tn.esprit.asi.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,8 +18,10 @@ public class UserRole implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("idrole")
     private Long IDRole;
     @Enumerated(EnumType.STRING)
+    @JsonProperty("libelle")
     private Role Libelle;
 
     public UserRole(Role libelle) {

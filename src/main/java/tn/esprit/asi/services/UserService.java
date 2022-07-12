@@ -190,9 +190,9 @@ public class UserService implements IUserService {
     public boolean ValidateEmail(String key) throws Exception {
         User user = userRepo.FindUserByEmailVerifyKey(key);
         if (user == null) throw new Exception("Invalid User");
-        final int MILLI_TO_HOUR = 1000 * 60 * 60;
-        if ((new Date().getTime() - user.getDateEmailVerifyKey().getTime()) / MILLI_TO_HOUR > 1)
-            throw new Exception("Expired");
+//        final int MILLI_TO_HOUR = 1000 * 60 * 60;
+//        if ((new Date().getTime() - user.getDateEmailVerifyKey().getTime()) / MILLI_TO_HOUR > 1)
+//            throw new Exception("Expired");
 
         user.setEmailVerifyKey(null);
         user.setDateEmailVerifyKey(null);

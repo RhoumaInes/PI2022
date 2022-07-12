@@ -20,7 +20,7 @@ import tn.esprit.asi.services.UserService;
 
 import java.util.Date;
 
-@EnableSwagger2
+//@EnableSwagger2
 @EnableScheduling
 @SpringBootApplication
 //@Configuration
@@ -30,24 +30,23 @@ public class BienEtreAuTravailApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BienEtreAuTravailApplication.class, args);
-		InitData();
 	}
 
-	private static void InitData() {
-		UserRoleService userRoleService = new UserRoleService();
-		UserService userService = new UserService();
-		UserRole userRole = userRoleService.CreateRole(new UserRole(Role.ROOT));
-		userRoleService.CreateRole(new UserRole(Role.SUPERADMIN));
-		userRoleService.CreateRole(new UserRole(Role.ADMIN));
-		userRoleService.CreateRole(new UserRole(Role.USER));
-
-		User user = new User("Beat", "bienetreautravail@outlook.com", "123", "Beat", "Team", 3, new Date(2022, 9, 15), "project", "Creator", "Informatique", "tunis", "CHARGUIA 2");
-		try {
-			userService.CreateAdmin(user);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-	}
+//	private static void InitData() {
+//		UserRoleService userRoleService = new UserRoleService();
+//		UserService userService = new UserService();
+//		UserRole userRole = userRoleService.CreateRole(new UserRole(Role.ROOT));
+//		userRoleService.CreateRole(new UserRole(Role.SUPERADMIN));
+//		userRoleService.CreateRole(new UserRole(Role.ADMIN));
+//		userRoleService.CreateRole(new UserRole(Role.USER));
+//
+//		User user = new User("Beat", "bienetreautravail@outlook.com", "123", "Beat", "Team", 3, new Date(2022, 9, 15), "project", "Creator", "Informatique", "tunis", "CHARGUIA 2");
+//		try {
+//			userService.CreateAdmin(user);
+//		} catch (Exception e) {
+//			throw new RuntimeException(e);
+//		}
+//
+//	}
 
 }
