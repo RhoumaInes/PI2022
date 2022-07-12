@@ -57,9 +57,9 @@ public class EvenementController {
 		evenementServiceImpl.participation(IdEv, IdUser);
 	}
 	
-	@PutMapping("/remove-participation/{event-id}/{user-id}")
+	@PutMapping("/annuler-participation/{event-id}/{user-id}")
 	@ResponseBody
-	public void removeParticipation(@PathVariable("event-id") Long IdEv, @PathVariable("user-id") Long IdUser)
+	public void annulerParticipation(@PathVariable("event-id") Long IdEv, @PathVariable("user-id") Long IdUser)
 	{
 		evenementServiceImpl.annulerParticipation(IdEv,IdUser);
 	}
@@ -68,6 +68,12 @@ public class EvenementController {
 	@ResponseBody
 	public void deleteEvent(@PathVariable("event-id") Long Id) {
 		evenementServiceImpl.deleteEvent(Id);
+	}
+	
+	@GetMapping("/place-dispo/{event-id}")
+	@ResponseBody
+	public Long placeDispon(@PathVariable("event-id") Long Id) {
+		return evenementServiceImpl.placeDispo(Id);
 	}
 
 }

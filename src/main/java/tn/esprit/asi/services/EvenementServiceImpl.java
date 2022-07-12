@@ -1,5 +1,7 @@
 package tn.esprit.asi.services;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -8,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import tn.esprit.asi.entities.Evenement;
+import tn.esprit.asi.entities.Participation;
 import tn.esprit.asi.entities.User;
 import tn.esprit.asi.reposetories.EvenementRepo;
+import tn.esprit.asi.reposetories.ParticipationRepo;
 import tn.esprit.asi.reposetories.UserRepo;
 
 @Service
@@ -19,6 +23,8 @@ public class EvenementServiceImpl implements EvenementService {
 	EvenementRepo evenementRepo;
 	@Autowired
 	UserRepo userRepo;
+	@Autowired
+	ParticipationRepo participationRepo;
 
 	@Override
 	public List<Evenement> listeAllEvenement() {
@@ -49,23 +55,38 @@ public class EvenementServiceImpl implements EvenementService {
 	public void participation(Long idevent, Long idUser) {
 		Evenement e = getEventById(idevent);
 		User u = userRepo.findById(idUser).get();
-		Set<User> utilisateurs = e.getParticipation();
-		utilisateurs.add(u);
-		e.setParticipation(utilisateurs);
-		evenementRepo.save(e);
-		
-		
+		if(participationRepo.retrieveParticipationEvent(e,u)==null) {
+			if(placeDispo(idevent)>0) {
+				Participation participation = new Participation();
+				participation.setUserPart(u);
+				participation.setEvenementPart(e);
+				participation.setDateParticipation(new Date());
+				participation.setStatus(false);
+				participationRepo.save(participation);
+			}
+		}	
 	}
 
 	@Override
 	public void annulerParticipation(Long idevent, Long idUser) {
 		Evenement e = getEventById(idevent);
 		User u = userRepo.findById(idUser).get();
-		Set<User> utilisateurs = e.getParticipation();
-		utilisateurs.remove(u);
-		e.setParticipation(utilisateurs);
-		evenementRepo.save(e);
-		
+		Participation participation=participationRepo.retrieveParticipationEvent(e,u);
+		if(participation!=null) {
+			if(participation.getMontantPaye()==null || participation.getMontantPaye()<=0) {
+				participationRepo.delete(participation);
+			}else {
+				participation.setAnnulation(true);
+				participationRepo.save(participation);
+			}
+		}
+	}
+
+	@Override
+	public Long placeDispo(Long idEvent) {
+		Evenement e = getEventById(idEvent);
+		Long totalNBR= e.getMaxNumberPlaces();
+		return (totalNBR-participationRepo.placeDispo(e));
 	}
 
 }
