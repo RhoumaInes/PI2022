@@ -41,11 +41,11 @@ public class Participation implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dateParticipation;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JsonIgnore
 	private Evenement evenementPart;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JsonIgnore
 	private User userPart;
 }

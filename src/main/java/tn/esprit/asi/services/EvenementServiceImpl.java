@@ -38,12 +38,17 @@ public class EvenementServiceImpl implements EvenementService {
 
 	@Override
 	public Evenement addEvent(Evenement ev) {
+		ev.setDateCreation(new Date());
 		return evenementRepo.save(ev);
 	}
 
 	@Override
 	public void deleteEvent(Long id) {
-		evenementRepo.deleteById(id);
+		Evenement ev = getEventById(id);
+		if(participationRepo.retrieveParticipationEvent(ev)==null) {
+			evenementRepo.delete(ev);
+		}
+		
 	}
 
 	@Override
@@ -61,13 +66,15 @@ public class EvenementServiceImpl implements EvenementService {
 				participation.setUserPart(u);
 				participation.setEvenementPart(e);
 				participation.setDateParticipation(new Date());
-				participation.setStatus(false);
+				participation.setStatus(true);
+				participation.setAnnulation(false);
+				participation.setMontantPaye((float) 0);
 				participationRepo.save(participation);
 			}
 		}	
 	}
 
-	@Override
+	/*@Override
 	public void annulerParticipation(Long idevent, Long idUser) {
 		Evenement e = getEventById(idevent);
 		User u = userRepo.findById(idUser).get();
@@ -80,7 +87,7 @@ public class EvenementServiceImpl implements EvenementService {
 				participationRepo.save(participation);
 			}
 		}
-	}
+	}*/
 
 	@Override
 	public Long placeDispo(Long idEvent) {
@@ -89,4 +96,5 @@ public class EvenementServiceImpl implements EvenementService {
 		return (totalNBR-participationRepo.placeDispo(e));
 	}
 
+	
 }
