@@ -43,9 +43,10 @@ public class BadgeController {
 		return badge;
 	}
 	
-	@GetMapping("/getBadgeByUser")
+	@GetMapping("/getBadgeByUser/{user-id}")
 	@ResponseBody
-	public Badge getBadgeByUser(User user) {
+	public Badge getBadgeByUser(@PathVariable("user-id") Long userId) {
+		User user = userRepo.findById(userId).orElse(null);
 		return badgeService.getBadgeByUser(user);
 	}
 
