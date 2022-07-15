@@ -24,7 +24,7 @@ import java.util.Date;
 @EnableScheduling
 @SpringBootApplication
 //@Configuration
-//@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy
 //@MXBean(name=“entityManagerFactory”)
 public class BienEtreAuTravailApplication {
 
