@@ -18,6 +18,10 @@ public interface EvenementService {
 	
 	void participation(Long idevent, Long idUser);
 	
-	void annulerParticipation(Long idevent, Long idUser);
+	//void annulerParticipation(Long idevent, Long idUser);
+	
+	Long placeDispo(Long idEvent);
+	
+	
 
 }

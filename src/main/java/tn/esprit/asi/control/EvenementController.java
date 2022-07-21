@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import tn.esprit.asi.entities.Evenement;
 import tn.esprit.asi.services.EvenementServiceImpl;
+import tn.esprit.asi.services.ParticipationServiceImpl;
 
 @RestController
 @Api(tags = "Event management")
@@ -23,6 +24,8 @@ import tn.esprit.asi.services.EvenementServiceImpl;
 public class EvenementController {
 	@Autowired
 	EvenementServiceImpl evenementServiceImpl;
+	@Autowired
+	ParticipationServiceImpl participationServiceImpl;
 	
 	@PostMapping("/add-event")
 	@ResponseBody
@@ -57,17 +60,35 @@ public class EvenementController {
 		evenementServiceImpl.participation(IdEv, IdUser);
 	}
 	
-	@PutMapping("/remove-participation/{event-id}/{user-id}")
+	@PutMapping("/annuler-participation/{participation-id}")
 	@ResponseBody
-	public void removeParticipation(@PathVariable("event-id") Long IdEv, @PathVariable("user-id") Long IdUser)
+	public void annulerParticipation(@PathVariable("participation-id") Long IdPart)
 	{
-		evenementServiceImpl.annulerParticipation(IdEv,IdUser);
+		participationServiceImpl.annulerParticipation(IdPart);
 	}
 	
 	@DeleteMapping("/remove-event/{event-id}")
 	@ResponseBody
 	public void deleteEvent(@PathVariable("event-id") Long Id) {
 		evenementServiceImpl.deleteEvent(Id);
+	}
+	
+	@GetMapping("/place-dispo/{event-id}")
+	@ResponseBody
+	public Long placeDispon(@PathVariable("event-id") Long Id) {
+		return evenementServiceImpl.placeDispo(Id);
+	}
+	
+	@PutMapping("/resilier-participation/{participation-id}")
+	@ResponseBody
+	public void resilierParticipation(@PathVariable("participation-id") Long IdPart) {
+		participationServiceImpl.resilierParticipation(IdPart);
+	}
+	
+	@DeleteMapping("/remove-participant/{participation-id}")
+	@ResponseBody
+	public void deleteParticipant(@PathVariable("participation-id") Long idParticipation) {
+		participationServiceImpl.supprimerParticipation(idParticipation);
 	}
 
 }

@@ -1,0 +1,13 @@
+package tn.esprit.asi.services;
+
+import java.util.List;
+
+import tn.esprit.asi.entities.Participation;
+
+public interface ParticipationService {
+	void resilierParticipation(Long idParticipation);
+	void supprimerParticipation(Long idParticipation);
+	void annulerParticipation(Long idParticipation);
+	
+	List<Participation> listParticipationEvent(Long idEvent);
+}

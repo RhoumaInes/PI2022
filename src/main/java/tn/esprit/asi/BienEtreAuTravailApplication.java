@@ -20,11 +20,11 @@ import tn.esprit.asi.services.UserService;
 
 import java.util.Date;
 
-//@EnableSwagger2
+@EnableSwagger2
 @EnableScheduling
 @SpringBootApplication
 //@Configuration
-//@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy
 //@MXBean(name=“entityManagerFactory”)
 public class BienEtreAuTravailApplication {
 
