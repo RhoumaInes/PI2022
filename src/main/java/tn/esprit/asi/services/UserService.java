@@ -3,6 +3,7 @@ package tn.esprit.asi.services;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.core.env.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -14,6 +15,7 @@ import tn.esprit.asi.reposetories.UserRepo;
 
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -23,6 +25,9 @@ public class UserService implements IUserService {
     UserRepo userRepo;
     @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
+    private Environment environment;
 
     @Override
     public boolean CreateUser(User user, String URL) throws Exception {
@@ -163,7 +168,7 @@ public class UserService implements IUserService {
     private void sendVerificationEmail(User user, String URL) {
         try {
             String toAddress = user.getEmail();
-            String fromAddress = "bienetreautravail@outlook.com";
+            String fromAddress = environment.getProperty("spring.mail.username");
             String senderName = "Bien etre au ravail";
             String subject = "Veuillez vérifier votre email";
             String verifyURL = URL + "/verify?key=" + user.getEmailVerifyKey();
@@ -224,7 +229,7 @@ public class UserService implements IUserService {
     private void sendResetEmail(User user, String URL) {
         try {
             String toAddress = user.getEmail();
-            String fromAddress = "bienetreautravail@outlook.com";
+            String fromAddress = environment.getProperty("spring.mail.username");
             String senderName = "Bien etre au ravail";
             String subject = "Réinitialisez votre mot de passe";
             String verifyURL = URL + "/reset?key=" + user.getPasswordResetKey();
@@ -264,4 +269,7 @@ public class UserService implements IUserService {
         return userRepo.findById(IDUser).orElse(null);
     }
 
+    public List<User> fetch() {
+        return (List<User>) userRepo.findAll();
+    }
 }

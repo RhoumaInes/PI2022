@@ -14,6 +14,7 @@ import tn.esprit.asi.services.IUserService;
 import tn.esprit.asi.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -160,5 +161,21 @@ public class UserController {
         return body;
     }
 
+    @GetMapping("/fetchall")
+    @ResponseBody
+    public BodyResponse<List<User>> TryToResetPassword(HttpServletRequest request) {
+        BodyResponse<List<User>> body = new BodyResponse<>();
+        try {
+            body.setData(userService.fetch());
+            body.setMessage("reset send");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(null);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
 
+        return body;
+    }
 }
