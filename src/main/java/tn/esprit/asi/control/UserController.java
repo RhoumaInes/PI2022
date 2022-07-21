@@ -163,15 +163,33 @@ public class UserController {
 
     @GetMapping("/fetchall")
     @ResponseBody
-    public BodyResponse<List<User>> TryToResetPassword(HttpServletRequest request) {
+    public BodyResponse<List<User>> fetchAll(HttpServletRequest request) {
         BodyResponse<List<User>> body = new BodyResponse<>();
         try {
             body.setData(userService.fetch());
-            body.setMessage("reset send");
+            body.setMessage("all users");
             body.setStatus(ResponseStatus.DONE);
         } catch (Exception e) {
             log.error(e.getMessage());
             body.setData(null);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @GetMapping("/resendverify/{login}")
+    @ResponseBody
+    public BodyResponse<Boolean> TryToResentEmail(@PathVariable("login") String login, HttpServletRequest request) {
+        BodyResponse<Boolean> body = new BodyResponse<>();
+        try {
+            body.setData(userService.resendEmail(login, getSiteURL(request) + "/user"));
+            body.setMessage("resend");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
             body.setMessage(e.getMessage());
             body.setStatus(ResponseStatus.ERROR);
         }

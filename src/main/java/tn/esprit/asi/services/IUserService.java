@@ -22,6 +22,8 @@ public interface IUserService {
 
     boolean ValidateEmail(String key) throws Exception;
 
+    boolean resendEmail(String Login, String URL) throws Exception;
+
     boolean TryToResetPassword(String Email, String URL) throws Exception;
 
     public boolean ResetPassword(String NewPassword, String key) throws Exception;

@@ -165,6 +165,22 @@ public class UserService implements IUserService {
         return true;
     }
 
+    public boolean resendEmail(String Login, String URL) throws Exception {
+        User user = userRepo.FindUserByLogin(Login);
+        if (user == null) throw new Exception("Invalid User");
+
+        if (user.getEtat() != UserState.UNACTIVATED) throw new Exception("User UNAUTHORIZED");
+
+        String randomCode = RandomString.make(64);
+        user.setEmailVerifyKey(randomCode);
+        user.setDateEmailVerifyKey(new Date());
+
+        userRepo.save(user);
+        sendVerificationEmail(user, URL);
+
+        return true;
+    }
+
     private void sendVerificationEmail(User user, String URL) {
         try {
             String toAddress = user.getEmail();
@@ -270,6 +286,6 @@ public class UserService implements IUserService {
     }
 
     public List<User> fetch() {
-        return (List<User>) userRepo.findAll();
+        return userRepo.FindAllUser();
     }
 }
