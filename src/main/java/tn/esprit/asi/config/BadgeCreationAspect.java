@@ -27,8 +27,11 @@ public class BadgeCreationAspect {
 		Float avg = evalController.evaluationAverage(userId);
 		Badge badge= badgeController.getBadgeByUser(userId);
 		if(badge!=null && avg == 10) {
+			badge.setIsTrophy(true);
 			badgeController.transformToTrophe(badge);
-		}
+		}else if(badge!=null && avg<10) {
+			badge.setIsTrophy(false);
+			badgeController.transformToTrophe(badge);		}
 		else if(badge==null && avg >=5) {
 			Badge newBadge = new Badge();
 			newBadge.setId(new Long(123));
