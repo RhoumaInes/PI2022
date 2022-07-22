@@ -54,4 +54,9 @@ public class EvaluationServiceImpl implements EvaluationService {
 		return evalRepo.findEvalByUserTo(userTo);
 	}
 
+	@Override
+	public List<Evaluation> findEvalByUserFrom(User userFrom) {
+		return evalRepo.findEvalByUserFrom(userFrom);
+	}
+
 }

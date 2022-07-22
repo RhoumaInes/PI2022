@@ -17,6 +17,8 @@ public interface EvaluationService {
 	
 	List<Evaluation> findEvalByUserTo(User userTo);
 	
+	List<Evaluation> findEvalByUserFrom(User userFrom);
+	
 	Float calculateAverageEvalByUserTo(User userTo);
 
 }
