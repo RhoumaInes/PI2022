@@ -1,4 +1,4 @@
-package tn.esprit.asi.Utils;
+package tn.esprit.asi.payload;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import javax.persistence.Enumerated;
 
 @Getter
 @Setter
-public class BodyResponse<T> {
+public class ApiResponse<T> {
     private String Message;
     @Enumerated(EnumType.STRING)
     private ResponseStatus Status;

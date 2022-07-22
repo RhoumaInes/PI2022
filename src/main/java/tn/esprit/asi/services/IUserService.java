@@ -31,4 +31,10 @@ public interface IUserService {
     public User fetchUserByID(Long IDUser);
 
     List<User> fetch();
+
+    boolean checkEmailAvailability(String Email) throws Exception;
+
+    boolean checkUsernameAvailability(String UserName) throws Exception;
+
+    User fetchUserByLogin(String login);
 }

@@ -2,16 +2,15 @@ package tn.esprit.asi.control;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import tn.esprit.asi.Utils.BodyResponse;
-import tn.esprit.asi.Utils.ResetPassword;
-import tn.esprit.asi.Utils.ResponseStatus;
-import tn.esprit.asi.Utils.SignIn;
+import tn.esprit.asi.payload.ApiResponse;
+import tn.esprit.asi.payload.LoginRequest;
+import tn.esprit.asi.payload.ResetPasswordRequest;
+import tn.esprit.asi.payload.ResponseStatus;
 import tn.esprit.asi.entities.User;
 import tn.esprit.asi.entities.UserState;
+import tn.esprit.asi.security.JwtTokenProvider;
 import tn.esprit.asi.services.IUserService;
-import tn.esprit.asi.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -24,10 +23,13 @@ public class UserController {
     @Autowired
     IUserService userService;
 
+    @Autowired
+    JwtTokenProvider tokenProvider;
+
     @PostMapping("/create")
     @ResponseBody
-    public BodyResponse<Boolean> createUser(@RequestBody User user, HttpServletRequest request) {
-        BodyResponse<Boolean> body = new BodyResponse<>();
+    public ApiResponse<Boolean> createUser(@RequestBody User user, HttpServletRequest request) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
         try {
             log.info("user ", user);
             body.setData(userService.CreateUser(user, getSiteURL(request) + "/user"));
@@ -50,8 +52,8 @@ public class UserController {
 
     @PostMapping("/update")
     @ResponseBody
-    public BodyResponse<Boolean> updateUser(@RequestBody User user, HttpServletRequest request) {
-        BodyResponse<Boolean> body = new BodyResponse<>();
+    public ApiResponse<Boolean> updateUser(@RequestBody User user, HttpServletRequest request) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
         try {
             body.setData(userService.UpdateUser(user));
             body.setMessage("updated");
@@ -68,8 +70,8 @@ public class UserController {
 
     @GetMapping("/verify")
     @ResponseBody
-    public BodyResponse<Boolean> verifyEmail(@RequestParam("key") String key) {
-        BodyResponse<Boolean> body = new BodyResponse<>();
+    public ApiResponse<Boolean> verifyEmail(@RequestParam("key") String key) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
         try {
             body.setData(userService.ValidateEmail(key));
             body.setMessage("validated");
@@ -86,8 +88,8 @@ public class UserController {
 
     @GetMapping("/fetchbyid/{id}")
     @ResponseBody
-    public BodyResponse<User> fetchUser(@PathVariable("id") Long IDUser) {
-        BodyResponse<User> body = new BodyResponse<>();
+    public ApiResponse<User> fetchUser(@PathVariable("id") Long IDUser) {
+        ApiResponse<User> body = new ApiResponse<>();
         try {
             body.setData(userService.fetchUserByID(IDUser));
             body.setMessage("ready");
@@ -104,8 +106,8 @@ public class UserController {
 
     @GetMapping("/tryresetpassword/{email}")
     @ResponseBody
-    public BodyResponse<Boolean> TryToResetPassword(@PathVariable("email") String email, HttpServletRequest request) {
-        BodyResponse<Boolean> body = new BodyResponse<>();
+    public ApiResponse<Boolean> TryToResetPassword(@PathVariable("email") String email, HttpServletRequest request) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
         try {
             body.setData(userService.TryToResetPassword(email, ""));
             body.setMessage("reset send");
@@ -122,8 +124,8 @@ public class UserController {
 
     @PostMapping("/resetpassword")
     @ResponseBody
-    public BodyResponse<Boolean> resetPassword(@RequestBody ResetPassword rs) {
-        BodyResponse<Boolean> body = new BodyResponse<>();
+    public ApiResponse<Boolean> resetPassword(@RequestBody ResetPasswordRequest rs) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
         try {
             body.setData(userService.ResetPassword(rs.getPassword(), rs.getKey()));
             body.setMessage("reset complete");
@@ -140,20 +142,25 @@ public class UserController {
 
     @PostMapping("/signin")
     @ResponseBody
-    public BodyResponse<Boolean> signin(@RequestBody SignIn signIn) {
-        BodyResponse<Boolean> body = new BodyResponse<>();
+    public ApiResponse<String> signin(@RequestBody LoginRequest signIn) {
+        ApiResponse<String> body = new ApiResponse<>();
         try {
-            log.info("login", signIn);
-            body.setStatus(ResponseStatus.UNACTIVATED);
-            User user = userService.ToSignInUser(signIn.getLogin(), signIn.getPassword());
-            if (user.getEtat() == UserState.ACTIVATED)
-                body.setStatus(ResponseStatus.ACTIVATED);
 
-            body.setData(true);
-            body.setMessage("user verified");
+            User user = userService.ToSignInUser(signIn.getLogin(), signIn.getPassword());
+
+            if (user.getEtat() != UserState.ACTIVATED) {
+                body.setStatus(ResponseStatus.UNAUTHORIZED);
+                body.setData(null);
+                return body;
+            }
+
+            body.setStatus(ResponseStatus.ACTIVATED);
+            String jwt = tokenProvider.generateToken(user.getIDUser());
+            body.setData(jwt);
+            body.setMessage("connecting");
         } catch (Exception e) {
             log.error(e.getMessage());
-            body.setData(false);
+            body.setData(null);
             body.setMessage(e.getMessage());
             body.setStatus(ResponseStatus.ERROR);
         }
@@ -163,8 +170,8 @@ public class UserController {
 
     @GetMapping("/fetchall")
     @ResponseBody
-    public BodyResponse<List<User>> fetchAll(HttpServletRequest request) {
-        BodyResponse<List<User>> body = new BodyResponse<>();
+    public ApiResponse<List<User>> fetchAll(HttpServletRequest request) {
+        ApiResponse<List<User>> body = new ApiResponse<>();
         try {
             body.setData(userService.fetch());
             body.setMessage("all users");
@@ -181,8 +188,8 @@ public class UserController {
 
     @GetMapping("/resendverify/{login}")
     @ResponseBody
-    public BodyResponse<Boolean> TryToResentEmail(@PathVariable("login") String login, HttpServletRequest request) {
-        BodyResponse<Boolean> body = new BodyResponse<>();
+    public ApiResponse<Boolean> TryToResentEmail(@PathVariable("login") String login, HttpServletRequest request) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
         try {
             body.setData(userService.resendEmail(login, getSiteURL(request) + "/user"));
             body.setMessage("resend");
@@ -190,6 +197,60 @@ public class UserController {
         } catch (Exception e) {
             log.error(e.getMessage());
             body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @GetMapping("/checkusernameavailability/{username}")
+    @ResponseBody
+    public ApiResponse<Boolean> checkUsernameAvailability(@PathVariable("username") String username, HttpServletRequest request) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
+        try {
+            body.setData(userService.checkUsernameAvailability(username));
+            body.setMessage("Available");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @GetMapping("/checkemailavailability/{email}")
+    @ResponseBody
+    public ApiResponse<Boolean> checkEmailAvailability(@PathVariable("email") String email, HttpServletRequest request) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
+        try {
+            body.setData(userService.checkEmailAvailability(email));
+            body.setMessage("Available");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @GetMapping("/fetchbylogin/{login}")
+    @ResponseBody
+    public ApiResponse<User> fetchUserByLogin(@PathVariable("login") String login) {
+        ApiResponse<User> body = new ApiResponse<>();
+        try {
+            body.setData(userService.fetchUserByLogin(login));
+            body.setMessage("Done");
+            body.setStatus(ResponseStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(null);
             body.setMessage(e.getMessage());
             body.setStatus(ResponseStatus.ERROR);
         }
