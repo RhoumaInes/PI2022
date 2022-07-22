@@ -44,4 +44,14 @@ public class EvaluationServiceImpl implements EvaluationService {
 		return evalRepo.countEvalByUserTo(userTo);
 	}
 
+	@Override
+	public Float calculateAverageEvalByUserTo(User userTo) {
+		return evalRepo.evaluationAverageByUserTo(userTo);
+	}
+
+	@Override
+	public List<Evaluation> findEvalByUserTo(User userTo) {
+		return evalRepo.findEvalByUserTo(userTo);
+	}
+
 }

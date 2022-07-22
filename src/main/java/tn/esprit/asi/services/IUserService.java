@@ -2,6 +2,8 @@ package tn.esprit.asi.services;
 
 import tn.esprit.asi.entities.User;
 
+import java.util.List;
+
 public interface IUserService {
 
     boolean CreateUser(User user, String URL) throws Exception;
@@ -20,9 +22,13 @@ public interface IUserService {
 
     boolean ValidateEmail(String key) throws Exception;
 
+    boolean resendEmail(String Login, String URL) throws Exception;
+
     boolean TryToResetPassword(String Email, String URL) throws Exception;
 
     public boolean ResetPassword(String NewPassword, String key) throws Exception;
 
     public User fetchUserByID(Long IDUser);
+
+    List<User> fetch();
 }

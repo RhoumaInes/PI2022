@@ -40,17 +40,19 @@ public class EvaluationController {
 				        .status(HttpStatus.NOT_FOUND)
 				        .body("User is mandatory");
 			}else {
-				eval.setUserTo(userRepo.findById(userFromId).orElse(null));
-				eval.setUserFrom(userRepo.findById(userToId).orElse(null));
+				eval.setUserTo(userRepo.findById(userToId).orElse(null));
+				eval.setUserFrom(userRepo.findById(userFromId).orElse(null));
 				evaluationService.addEval(eval);
 			}
 		    return new ResponseEntity<>(eval, HttpStatus.OK);
 
 	}
 
-	@PutMapping("/updateEvaluation")
+	@PutMapping("/updateEvaluation/{userTo-id}/{userFrom-id}")
 	@ResponseBody
-	public Evaluation updateEvaluation(@RequestBody Evaluation eval) {
+	public Evaluation updateEvaluation(@RequestBody Evaluation eval, @PathVariable("userTo-id") Long userToId, @PathVariable("userFrom-id") Long userFromId) {
+		eval.setUserTo(userRepo.findById(userToId).orElse(null));
+		eval.setUserFrom(userRepo.findById(userFromId).orElse(null));
 		evaluationService.updateEval(eval);
 		return eval;
 	}
@@ -62,11 +64,25 @@ public class EvaluationController {
 		return  evaluationService.getEvals();
 	}
 	
-	@GetMapping("/countEvalByUserTo")
+	@GetMapping("/countEvalByUserTo/{userTo-id}")
 	@ResponseBody
-	public Long countEvalByUserTo(@RequestBody User userTo) {
-		
+	public Long countEvalByUserTo(@PathVariable("userTo-id") Long userToId) {
+		User userTo = userRepo.findById(userToId).orElse(null);
 		return  evaluationService.countEvalByUserTo(userTo);
+	}
+	
+	@GetMapping("/findEvalByUserTo/{userTo-id}")
+	@ResponseBody
+	public List<Evaluation> findEvalByUserTo(@PathVariable("userTo-id") Long userToId) {
+		User userTo = userRepo.findById(userToId).orElse(null);
+		return  evaluationService.findEvalByUserTo(userTo);
+	}
+	
+	@GetMapping("/evaluationAverageByUserTo/{userTo-id}")
+	@ResponseBody
+	public Float evaluationAverage(@PathVariable("userTo-id") Long userToId) {
+		User userTo = userRepo.findById(userToId).orElse(null);
+		return  evaluationService.calculateAverageEvalByUserTo(userTo);
 	}
 
 }

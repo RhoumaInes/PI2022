@@ -14,4 +14,9 @@ public interface EvaluationService {
 	List<Evaluation> getEvals();
 	
 	Long countEvalByUserTo(User userTo);
+	
+	List<Evaluation> findEvalByUserTo(User userTo);
+	
+	Float calculateAverageEvalByUserTo(User userTo);
+
 }

@@ -6,6 +6,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tn.esprit.asi.entities.User;
 
+import java.util.List;
+
 
 @Repository
 public interface UserRepo extends CrudRepository<User, Long> {
@@ -31,4 +33,6 @@ public interface UserRepo extends CrudRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.PasswordResetKey = :key")
     public User FindActiveUserByPasswordkey(@Param("key") String key);
 
+    @Query("SELECT u FROM User u WHERE u.Etat='ACTIVATED'")
+    public List<User> FindAllUser();
 }

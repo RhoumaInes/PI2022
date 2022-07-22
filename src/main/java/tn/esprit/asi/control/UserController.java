@@ -14,6 +14,7 @@ import tn.esprit.asi.services.IUserService;
 import tn.esprit.asi.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -160,5 +161,39 @@ public class UserController {
         return body;
     }
 
+    @GetMapping("/fetchall")
+    @ResponseBody
+    public BodyResponse<List<User>> fetchAll(HttpServletRequest request) {
+        BodyResponse<List<User>> body = new BodyResponse<>();
+        try {
+            body.setData(userService.fetch());
+            body.setMessage("all users");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(null);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
 
+        return body;
+    }
+
+    @GetMapping("/resendverify/{login}")
+    @ResponseBody
+    public BodyResponse<Boolean> TryToResentEmail(@PathVariable("login") String login, HttpServletRequest request) {
+        BodyResponse<Boolean> body = new BodyResponse<>();
+        try {
+            body.setData(userService.resendEmail(login, getSiteURL(request) + "/user"));
+            body.setMessage("resend");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
 }
