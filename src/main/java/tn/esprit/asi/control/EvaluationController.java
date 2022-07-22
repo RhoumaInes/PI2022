@@ -77,6 +77,12 @@ public class EvaluationController {
 		User userTo = userRepo.findById(userToId).orElse(null);
 		return  evaluationService.findEvalByUserTo(userTo);
 	}
+	@GetMapping("/findEvalByUserFrom/{userFrom-id}")
+	@ResponseBody
+	public List<Evaluation> findEvalByUserFrom(@PathVariable("userFrom-id") Long userFromId) {
+		User userTo = userRepo.findById(userFromId).orElse(null);
+		return  evaluationService.findEvalByUserFrom(userTo);
+	}
 	
 	@GetMapping("/evaluationAverageByUserTo/{userTo-id}")
 	@ResponseBody

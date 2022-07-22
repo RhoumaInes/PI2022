@@ -24,6 +24,11 @@ public interface EvaluationRepo extends JpaRepository<Evaluation, Long> {
 	public List<Evaluation> findEvalByUserTo(@Param("userTo")User userTo);
 	
 	@Query("Select "
+			+ "(e) from Evaluation e "
+			+ "where e.userFrom=:userFrom ")
+	public List<Evaluation> findEvalByUserFrom(@Param("userFrom")User userFrom);
+	
+	@Query("Select "
 			+ "AVG(note) from Evaluation e "
 			+ "where e.userTo=:userTo ")
 	public Float evaluationAverageByUserTo(@Param("userTo")User userTo);
