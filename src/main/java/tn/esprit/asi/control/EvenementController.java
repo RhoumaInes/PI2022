@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import tn.esprit.asi.entities.Evenement;
+import tn.esprit.asi.entities.Participation;
 import tn.esprit.asi.services.EvenementServiceImpl;
 import tn.esprit.asi.services.ParticipationServiceImpl;
 
@@ -38,6 +39,12 @@ public class EvenementController {
 	@ResponseBody
 	public List<Evenement> listingEvents() {
 		return evenementServiceImpl.listeAllEvenement();
+	}
+	
+	@GetMapping("/liste-des-participants/{event-id}")
+	@ResponseBody
+	public List<Participation> listingParticip(@PathVariable("event-id") Long Id) {
+		return participationServiceImpl.listParticipationEvent(Id);
 	}
 	
 	@GetMapping("/evenement-par-id/{event-id}")
