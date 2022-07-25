@@ -3,12 +3,10 @@ package tn.esprit.asi.control;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tn.esprit.asi.payload.ApiResponse;
-import tn.esprit.asi.payload.LoginRequest;
-import tn.esprit.asi.payload.ResetPasswordRequest;
-import tn.esprit.asi.payload.ResponseStatus;
+import tn.esprit.asi.payload.*;
 import tn.esprit.asi.entities.User;
 import tn.esprit.asi.entities.UserState;
+import tn.esprit.asi.payload.ResponseStatus;
 import tn.esprit.asi.security.JwtTokenProvider;
 import tn.esprit.asi.services.IUserService;
 
@@ -33,6 +31,24 @@ public class UserController {
         try {
             log.info("user ", user);
             body.setData(userService.CreateUser(user, getSiteURL(request) + "/user"));
+            body.setMessage("created");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @PostMapping("/signup")
+    @ResponseBody
+    public ApiResponse<Boolean> SignUp(@RequestBody SignUpRequest user, HttpServletRequest request) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
+        try {
+            body.setData(userService.SignUp(user, getSiteURL(request) + "/user"));
             body.setMessage("created");
             body.setStatus(ResponseStatus.DONE);
         } catch (Exception e) {
@@ -142,13 +158,18 @@ public class UserController {
 
     @PostMapping("/signin")
     @ResponseBody
-    public ApiResponse<String> signin(@RequestBody LoginRequest signIn) {
-        ApiResponse<String> body = new ApiResponse<>();
+    public ApiResponse<SignInResponse> signin(@RequestBody LoginRequest signIn) {
+        ApiResponse<SignInResponse> body = new ApiResponse<>();
         try {
 
             User user = userService.ToSignInUser(signIn.getLogin(), signIn.getPassword());
 
-            if (user.getEtat() != UserState.ACTIVATED) {
+            if (user.getEtat() == UserState.UNACTIVATED) {
+                body.setStatus(ResponseStatus.UNACTIVATED);
+                body.setData(null);
+                return body;
+            }
+            if (user.getEtat() == UserState.REMOVED) {
                 body.setStatus(ResponseStatus.UNAUTHORIZED);
                 body.setData(null);
                 return body;
@@ -156,7 +177,7 @@ public class UserController {
 
             body.setStatus(ResponseStatus.ACTIVATED);
             String jwt = tokenProvider.generateToken(user.getIDUser());
-            body.setData(jwt);
+            body.setData(new SignInResponse(jwt, user.getIDUser(), user.getUserName()));
             body.setMessage("connecting");
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -10,8 +10,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import tn.esprit.asi.Utils.PasswordUtils;
+import tn.esprit.asi.entities.Role;
 import tn.esprit.asi.entities.User;
+import tn.esprit.asi.entities.UserRole;
 import tn.esprit.asi.entities.UserState;
+import tn.esprit.asi.payload.SignUpRequest;
 import tn.esprit.asi.reposetories.UserRepo;
 
 import javax.mail.internet.MimeMessage;
@@ -56,6 +59,45 @@ public class UserService implements IUserService {
 
         userRepo.save(user);
         sendVerificationEmail(user, URL);
+
+        return true;
+    }
+
+    public boolean SignUp(SignUpRequest user, String URL) throws Exception {
+        //Remove space from username if exist
+        user.setUsername(user.getUsername().replaceAll("\\s+", ""));
+
+        if (!EmailValidator.getInstance().isValid(user.getEmail()))
+            throw new Exception("Invalid Email");
+
+        if (userRepo.FindUserByUserName(user.getUsername()) != null || userRepo.FindUserByEmail(user.getEmail()) != null)
+            throw new Exception("User Exist");
+
+        User u = new User();
+        u.setUserName(user.getUsername());
+        u.setNom(user.getNom());
+        u.setPrenom(user.getPrenom());
+        u.setAge(user.getAge());
+        u.setDateNaissance(user.getDatenaissance());
+        u.setEmail(user.getEmail());
+        u.setPassword(user.getPassword());
+        u.setUserRole(new UserRole(4l, Role.USER));
+
+        String randomCode = RandomString.make(64);
+        u.setEmailVerifyKey(randomCode);
+        u.setDateEmailVerifyKey(new Date());
+
+        String ecryptedPass = PasswordUtils.generateSecurePassword(u.getPassword());
+        u.setEncryPassword(ecryptedPass);
+
+        Date dd = new Date();
+        u.setDateInsertion(dd);
+        u.setDateModification(dd);
+
+        u.setEtat(UserState.UNACTIVATED);
+
+        userRepo.save(u);
+        sendVerificationEmail(u, URL);
 
         return true;
     }
@@ -293,7 +335,7 @@ public class UserService implements IUserService {
     public boolean checkUsernameAvailability(String UserName) throws Exception {
 
         User user = userRepo.FindUserByUserName(UserName);
-        if (user == null) throw new Exception("User UnAvailable");
+        if (user != null) throw new Exception("User UnAvailable");
 
         return true;
     }
@@ -302,7 +344,7 @@ public class UserService implements IUserService {
         if (!EmailValidator.getInstance().isValid(Email)) throw new Exception("Invalid Email");
 
         User user = userRepo.FindUserByEmail(Email);
-        if (user == null) throw new Exception("User UnAvailable");
+        if (user != null) throw new Exception("User UnAvailable");
 
         return true;
     }

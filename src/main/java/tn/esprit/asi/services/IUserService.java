@@ -1,12 +1,15 @@
 package tn.esprit.asi.services;
 
 import tn.esprit.asi.entities.User;
+import tn.esprit.asi.payload.SignUpRequest;
 
 import java.util.List;
 
 public interface IUserService {
 
     boolean CreateUser(User user, String URL) throws Exception;
+
+    boolean SignUp(SignUpRequest user, String URL) throws Exception;
 
     boolean CreateAdmin(User user) throws Exception;
 
