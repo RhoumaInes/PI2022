@@ -74,16 +74,35 @@ public class EvenementController {
 		participationServiceImpl.annulerParticipation(IdPart);
 	}
 	
+	@PutMapping("/annuler-participation/{event-id}/{user-id}")
+	@ResponseBody
+	public void annulerParticip(@PathVariable("event-id") Long IdEv, @PathVariable("user-id") Long IdUser)
+	{
+		participationServiceImpl.annulerParticipEvent(IdEv,IdUser);
+	}
+	
 	@DeleteMapping("/remove-event/{event-id}")
 	@ResponseBody
-	public void deleteEvent(@PathVariable("event-id") Long Id) {
-		evenementServiceImpl.deleteEvent(Id);
+	public Boolean deleteEvent(@PathVariable("event-id") Long Id) {
+		return evenementServiceImpl.deleteEvent(Id);
 	}
 	
 	@GetMapping("/place-dispo/{event-id}")
 	@ResponseBody
 	public Long placeDispon(@PathVariable("event-id") Long Id) {
 		return evenementServiceImpl.placeDispo(Id);
+	}
+	
+	@GetMapping("/nbr-participants/{event-id}")
+	@ResponseBody
+	public Long nbrParticipants(@PathVariable("event-id") Long Id) {
+		return participationServiceImpl.nombreParticipants(Id);
+	}
+	
+	@GetMapping("/check-participation/{event-id}/{user-id}")
+	@ResponseBody
+	public Boolean checkParticipation(@PathVariable("event-id") Long Id,@PathVariable("user-id") Long userId) {
+		return participationServiceImpl.checkParticipation(Id, userId);
 	}
 	
 	@PutMapping("/resilier-participation/{participation-id}")
