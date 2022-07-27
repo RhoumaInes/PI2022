@@ -43,10 +43,13 @@ public class EvenementServiceImpl implements EvenementService {
 	}
 
 	@Override
-	public void deleteEvent(Long id) {
+	public Boolean deleteEvent(Long id) {
 		Evenement ev = getEventById(id);
-		if(participationRepo.retrieveParticipationEvent(ev)==null) {
+		if(participationRepo.retrieveParticipationEvent(ev).isEmpty()) {
 			evenementRepo.delete(ev);
+			return true;
+		}else {
+			return false;
 		}
 		
 	}

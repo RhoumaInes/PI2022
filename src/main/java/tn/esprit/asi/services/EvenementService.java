@@ -12,7 +12,7 @@ public interface EvenementService {
 	
 	Evenement addEvent(Evenement ev);
 	
-	void deleteEvent(Long id);
+	Boolean deleteEvent(Long id);
 	
 	Evenement updateEvent(Evenement ev);
 	

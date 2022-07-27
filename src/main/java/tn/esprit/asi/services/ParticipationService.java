@@ -10,4 +10,9 @@ public interface ParticipationService {
 	void annulerParticipation(Long idParticipation);
 	
 	List<Participation> listParticipationEvent(Long idEvent);
+	Long nombreParticipants(Long idEvent);
+	
+	Boolean checkParticipation(Long idEvent,Long idUser);
+	
+	void annulerParticipEvent(Long idEvent,Long idUser);
 }
