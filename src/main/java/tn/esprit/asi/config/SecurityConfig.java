@@ -94,9 +94,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js")
                 .permitAll()
-                .antMatchers("/user/resendverify/**", "/user/fetchall", "/user/signin", "/user/verify")
+                .antMatchers("/user/resendverify/**", "/user/fetchall", "/user/signin", "/user/verify", "/user/resetpassword", "/user/signup")
                 .permitAll()
-                .antMatchers(HttpMethod.GET, "/user/checkusernameavailability/**", "/user/checkemailavailability/**")
+                .antMatchers(HttpMethod.GET, "/user/checkusernameavailability/**", "/user/checkemailavailability/**", "/user/tryresetpassword/**", "/user/verifypasswordkey/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated();

@@ -3,6 +3,7 @@ package tn.esprit.asi.services;
 import tn.esprit.asi.entities.User;
 import tn.esprit.asi.payload.SignUpRequest;
 
+import javax.swing.*;
 import java.util.List;
 
 public interface IUserService {
@@ -21,7 +22,7 @@ public interface IUserService {
 
     boolean AlterEmail(Long IDUser, String Email, String Password) throws Exception;
 
-    boolean AlterPassword(Long IDUser, String NewPassword, String Password) throws Exception;
+    boolean AlterPassword(String username, String NewPassword, String Password) throws Exception;
 
     boolean ValidateEmail(String key) throws Exception;
 
@@ -29,9 +30,11 @@ public interface IUserService {
 
     boolean TryToResetPassword(String Email, String URL) throws Exception;
 
-    public boolean ResetPassword(String NewPassword, String key) throws Exception;
+    boolean VerifyPasswordkey(String key) throws Exception;
 
-    public User fetchUserByID(Long IDUser);
+    boolean ResetPassword(String NewPassword, String key) throws Exception;
+
+    User fetchUserByID(Long IDUser);
 
     List<User> fetch();
 
@@ -40,4 +43,8 @@ public interface IUserService {
     boolean checkUsernameAvailability(String UserName) throws Exception;
 
     User fetchUserByLogin(String login);
+
+    boolean saveProfileImage(String UserName, String image) throws Exception;
+
+    String fetchProfileImage(String UserName) throws Exception;
 }
