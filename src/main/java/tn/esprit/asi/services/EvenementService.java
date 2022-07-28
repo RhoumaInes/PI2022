@@ -12,11 +12,11 @@ public interface EvenementService {
 	
 	Evenement addEvent(Evenement ev);
 	
-	void deleteEvent(Long id);
+	Boolean deleteEvent(Long id);
 	
 	Evenement updateEvent(Evenement ev);
 	
-	void participation(Long idevent, Long idUser);
+	Boolean participation(Long idevent, Long idUser);
 	
 	//void annulerParticipation(Long idevent, Long idUser);
 	
