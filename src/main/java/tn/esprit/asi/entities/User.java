@@ -28,6 +28,8 @@ public class User implements Serializable {
     @Column(nullable = false, unique = true, length = 50)
     @JsonProperty("username")
     private String UserName;
+    @JsonIgnore
+    private String image;
     @Column(nullable = false, unique = true)
     @JsonProperty("email")
     private String Email;
@@ -92,7 +94,8 @@ public class User implements Serializable {
     private Date DatePasswordResetKey;
 
     @OneToOne
-    @JsonProperty("userrole")
+    //@JsonProperty("userrole")
+    @JsonIgnore
     private UserRole UserRole;
 
     public User(String userName, String email, String password, String nom, String prenom, int age, Date dateNaissance, String titreProfile, String posteActuel, String secteur, String pays, String ville) {

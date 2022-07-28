@@ -194,9 +194,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean AlterPassword(Long IDUser, String NewPassword, String Password) throws Exception {
+    public boolean AlterPassword(String username, String NewPassword, String Password) throws Exception {
 
-        User user = userRepo.findById(IDUser).orElse(null);
+        User user = userRepo.FindUserByUserName(username);
         if (user == null) throw new Exception("Invalid User");
         if (!PasswordUtils.verifyUserPassword(Password, user.getEncryPassword()))
             throw new Exception("Invalid User");
@@ -291,7 +291,7 @@ public class UserService implements IUserService {
             String fromAddress = fromemail;
             String senderName = "Bien etre au ravail";
             String subject = "Réinitialisez votre mot de passe";
-            String verifyURL = URL + "/reset?key=" + user.getPasswordResetKey();
+            String verifyURL = URL + "?key=" + user.getPasswordResetKey();
             String content = "Bonjour " + user.getUserName() + ",<br>"
                     + "Nous avons reçu une demande de réinitialisation de votre mot de passe.<br>"
                     + "<h3><a href=\"" + verifyURL + "\" target=\"_self\">Réinitialiser</a></h3>"
@@ -312,12 +312,26 @@ public class UserService implements IUserService {
         }
     }
 
+    public boolean VerifyPasswordkey(String key) throws Exception {
+
+        User user = userRepo.FindActiveUserByPasswordkey(key);
+        if (user == null) throw new Exception("Invalid User");
+        final int MILLI_TO_HOUR = 1000 * 60 * 60;
+        if ((new Date().getTime() - user.getDatePasswordResetKey().getTime()) / MILLI_TO_HOUR > 1)
+            throw new Exception("Expired");
+
+        return true;
+    }
+
     public boolean ResetPassword(String NewPassword, String key) throws Exception {
 
         User user = userRepo.FindActiveUserByPasswordkey(key);
         if (user == null) throw new Exception("Invalid User");
         String ecryptedPass = PasswordUtils.generateSecurePassword(NewPassword);
         user.setEncryPassword(ecryptedPass);
+
+        user.setPasswordResetKey(null);
+        user.setDatePasswordResetKey(null);
         user.setDateModification(new Date());
         userRepo.save(user);
 
@@ -351,5 +365,21 @@ public class UserService implements IUserService {
 
     public User fetchUserByLogin(String login) {
         return userRepo.FindUserByLogin(login);
+    }
+
+    public boolean saveProfileImage(String UserName, String image) throws Exception {
+        User user = userRepo.FindUserByUserName(UserName);
+        if (user == null) throw new Exception("User invalid");
+
+        user.setImage(image);
+        userRepo.save(user);
+        return true;
+    }
+
+    public String fetchProfileImage(String UserName) throws Exception {
+        User user = userRepo.FindUserByUserName(UserName);
+        if (user == null) throw new Exception("User Invalid");
+
+        return user.getImage();
     }
 }

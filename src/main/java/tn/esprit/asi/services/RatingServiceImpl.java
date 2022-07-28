@@ -21,6 +21,7 @@ public class RatingServiceImpl implements RatingService {
 	@Override
 	public Ratting addEventRating(Ratting r, Long userId, Long eventId) {
 		Ratting rating = showEventRating(userId, eventId);
+		System.out.print(rating);
 		if(rating==null) {
 			r.setUserRatting(userRepo.findById(userId).get());
 			r.setEventRatting(evenementRepo.findById(eventId).get());
@@ -36,6 +37,12 @@ public class RatingServiceImpl implements RatingService {
 	@Override
 	public Ratting showEventRating(Long userId, Long eventId) {
 		return rattingRepo.retrieveRattingEvent(evenementRepo.findById(eventId).get(),userRepo.findById(userId).get());
+	}
+
+
+	@Override
+	public Float moyRating(Long eventId) {
+		return rattingRepo.moyenneRattingEvent(evenementRepo.findById(eventId).get());
 	}
 
 }

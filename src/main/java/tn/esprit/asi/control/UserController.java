@@ -1,6 +1,7 @@
 package tn.esprit.asi.control;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.asi.payload.*;
@@ -11,7 +12,9 @@ import tn.esprit.asi.security.JwtTokenProvider;
 import tn.esprit.asi.services.IUserService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileOutputStream;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/user")
@@ -125,9 +128,27 @@ public class UserController {
     public ApiResponse<Boolean> TryToResetPassword(@PathVariable("email") String email, HttpServletRequest request) {
         ApiResponse<Boolean> body = new ApiResponse<>();
         try {
-            body.setData(userService.TryToResetPassword(email, ""));
+            body.setData(userService.TryToResetPassword(email, "http://localhost:4200/auth/change-password"));
             body.setMessage("reset send");
             body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @GetMapping("/verifypasswordkey/{key}")
+    @ResponseBody
+    public ApiResponse<Boolean> VerifyPasswordkey(@PathVariable("key") String key) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
+        try {
+            body.setData(userService.VerifyPasswordkey(key));
+            body.setMessage("All Good");
+            body.setStatus(ResponseStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             body.setData(false);
@@ -272,6 +293,84 @@ public class UserController {
         } catch (Exception e) {
             log.error(e.getMessage());
             body.setData(null);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @PostMapping("/saveprofileimage")
+    @ResponseBody
+    public ApiResponse<Boolean> uploadProfileImage(@RequestBody ProfileImageRequest rs) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
+        try {
+
+            String imageDataBytes = rs.getImage().substring(rs.getImage().indexOf(",") + 1);
+            byte[] imageByte = Base64.decodeBase64(imageDataBytes);
+            String filename = rs.getUsername() + generateRandomString(10) + ".png";
+
+            userService.saveProfileImage(rs.getUsername(), filename);
+
+            String path = "D:\\3CINFOGL\\PI\\BE_BienEtreAuTravail\\src\\main\\webapp\\WEB-INF\\images\\" + filename;
+            FileOutputStream outputStream = new FileOutputStream(path);
+            outputStream.write(imageByte);
+            outputStream.flush();
+            outputStream.close();
+
+            body.setData(true);
+            body.setMessage("save complete");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    @GetMapping("/fetchprofileimage/{username}")
+    @ResponseBody
+    public ApiResponse<String> fetchProfileImage(@PathVariable("username") String username, HttpServletRequest request) {
+        ApiResponse<String> body = new ApiResponse<>();
+        try {
+
+            String image = getSiteURL(request) + "/images/" + userService.fetchProfileImage(username);
+            body.setData(image);
+            body.setMessage("Done");
+            body.setStatus(ResponseStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(null);
+            body.setMessage(e.getMessage());
+            body.setStatus(ResponseStatus.ERROR);
+        }
+
+        return body;
+    }
+
+    private String generateRandomString(int len) {
+        String chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        Random rnd = new Random();
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++)
+            sb.append(chars.charAt(rnd.nextInt(chars.length())));
+        return sb.toString();
+    }
+
+    @PostMapping("/alterpassword")
+    @ResponseBody
+    public ApiResponse<Boolean> AlterPassword(@RequestBody AlterPasswordRequest rs) {
+        ApiResponse<Boolean> body = new ApiResponse<>();
+        try {
+            body.setData(userService.AlterPassword(rs.getUsername(), rs.getNewpassword(), rs.getPassword()));
+            body.setMessage("alter complete");
+            body.setStatus(ResponseStatus.DONE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            body.setData(false);
             body.setMessage(e.getMessage());
             body.setStatus(ResponseStatus.ERROR);
         }

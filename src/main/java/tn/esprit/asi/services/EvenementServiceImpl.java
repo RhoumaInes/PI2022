@@ -43,10 +43,13 @@ public class EvenementServiceImpl implements EvenementService {
 	}
 
 	@Override
-	public void deleteEvent(Long id) {
+	public Boolean deleteEvent(Long id) {
 		Evenement ev = getEventById(id);
-		if(participationRepo.retrieveParticipationEvent(ev)==null) {
+		if(participationRepo.retrieveParticipationEvent(ev).isEmpty()) {
 			evenementRepo.delete(ev);
+			return true;
+		}else {
+			return false;
 		}
 		
 	}
@@ -57,21 +60,28 @@ public class EvenementServiceImpl implements EvenementService {
 	}
 
 	@Override
-	public void participation(Long idevent, Long idUser) {
+	public Boolean participation(Long idevent, Long idUser) {
 		Evenement e = getEventById(idevent);
 		User u = userRepo.findById(idUser).get();
+		log.info("test "+new Date()+" "+e.getDateDebut().compareTo(new Date()));
 		if(participationRepo.retrieveParticipationEvent(e,u)==null) {
 			if(placeDispo(idevent)>0) {
-				Participation participation = new Participation();
-				participation.setUserPart(u);
-				participation.setEvenementPart(e);
-				participation.setDateParticipation(new Date());
-				participation.setStatus(true);
-				participation.setAnnulation(false);
-				participation.setMontantPaye((float) 0);
-				participationRepo.save(participation);
+				if(e.getDateDebut().after(new Date())) {
+					Participation participation = new Participation();
+					participation.setUserPart(u);
+					participation.setEvenementPart(e);
+					participation.setDateParticipation(new Date());
+					participation.setStatus(true);
+					participation.setAnnulation(false);
+					participation.setMontantPaye((float) 0);
+					participationRepo.save(participation);
+					return true;
+				}
+				return false;
 			}
-		}	
+			return false;
+		}
+		return false;
 	}
 
 	/*@Override

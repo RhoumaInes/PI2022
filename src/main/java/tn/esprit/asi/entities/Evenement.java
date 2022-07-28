@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,6 +42,7 @@ public class Evenement implements Serializable {
 	private String emplacement;
 	@Temporal(TemporalType.DATE)
 	private Date dateCreation;
+	@Column(length=8000)
 	private String description;
 	private Float prixEvent;
 	private Long maxNumberPlaces;

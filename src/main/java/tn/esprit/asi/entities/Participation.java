@@ -42,10 +42,10 @@ public class Participation implements Serializable {
 	private Date dateParticipation;
 	
 	@ManyToOne
-	@JsonIgnore
+	//@JsonIgnore
 	private Evenement evenementPart;
 	
 	@ManyToOne
-	@JsonIgnore
+	//@JsonIgnore
 	private User userPart;
 }
