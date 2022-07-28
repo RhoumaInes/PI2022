@@ -44,4 +44,28 @@ public class BadgeCreationAspect {
 		
 		
 	}
+	@After("execution(* tn.esprit.asi.control.EvaluationController.updateEvaluation(..))")
+	public void update(JoinPoint joinPoint) {
+		Object[] args = joinPoint.getArgs();
+		Long userId = (Long) args[1];
+		Float avg = evalController.evaluationAverage(userId);
+		Badge badge= badgeController.getBadgeByUser(userId);
+		if(badge!=null && avg == 10) {
+			badge.setIsTrophy(true);
+			badgeController.transformToTrophe(badge);
+		}else if(badge!=null && (avg<10 && avg>=5 )) {
+			badge.setIsTrophy(false);
+			badgeController.transformToTrophe(badge);
+		}else if(badge!=null && avg<5) {
+			badge.setIsTrophy(false);
+			badgeController.deleteBadge(badge.getId());		
+		}else if(badge==null && avg >=5) {
+			Badge newBadge = new Badge();
+			newBadge.setId(new Long(123));
+			newBadge.setIsTrophy(false);
+			badgeController.createBadge(newBadge, userId);
+		}
+		
+		
+	}
 }

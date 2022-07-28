@@ -35,7 +35,9 @@ public class EvaluationController {
 	@PostMapping("/addEvaluation/{userTo-id}/{userFrom-id}")
 	@ResponseBody
 	public ResponseEntity addEvaluation(@RequestBody Evaluation eval, @PathVariable("userTo-id") Long userToId, @PathVariable("userFrom-id") Long userFromId) {
-			if(eval.getUserFrom()==null || eval.getUserTo()==null) {
+			
+		
+		if(eval.getUserFrom()==null || eval.getUserTo()==null) {
 				return ResponseEntity
 				        .status(HttpStatus.NOT_FOUND)
 				        .body("User is mandatory");
