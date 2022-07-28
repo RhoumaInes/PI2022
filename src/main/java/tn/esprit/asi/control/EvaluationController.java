@@ -62,7 +62,6 @@ public class EvaluationController {
 	@GetMapping("/listOfEvaluations")
 	@ResponseBody
 	public List<Evaluation> listOfEvaluations() {
-		
 		return  evaluationService.getEvals();
 	}
 	

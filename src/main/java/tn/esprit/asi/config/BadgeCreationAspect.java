@@ -44,6 +44,7 @@ public class BadgeCreationAspect {
 		
 		
 	}
+	
 	@After("execution(* tn.esprit.asi.control.EvaluationController.updateEvaluation(..))")
 	public void update(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();
