@@ -32,6 +32,9 @@ public class BadgeCreationAspect {
 		}else if(badge!=null && avg<10) {
 			badge.setIsTrophy(false);
 			badgeController.transformToTrophe(badge);		}
+		else if(badge!=null && avg<5) {
+			badge.setIsTrophy(false);
+			badgeController.deleteBadge(badge.getId());		}
 		else if(badge==null && avg >=5) {
 			Badge newBadge = new Badge();
 			newBadge.setId(new Long(123));

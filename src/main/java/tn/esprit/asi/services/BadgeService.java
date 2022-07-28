@@ -10,4 +10,7 @@ public interface BadgeService {
 	Long transformToTrophe(Badge badge);
 	
 	Badge getBadgeByUser(User user);
+	
+	void deleteBadge(Long badgeId);
+
 }
