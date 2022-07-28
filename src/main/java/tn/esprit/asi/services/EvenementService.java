@@ -16,7 +16,7 @@ public interface EvenementService {
 	
 	Evenement updateEvent(Evenement ev);
 	
-	void participation(Long idevent, Long idUser);
+	Boolean participation(Long idevent, Long idUser);
 	
 	//void annulerParticipation(Long idevent, Long idUser);
 	

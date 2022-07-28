@@ -62,23 +62,23 @@ public class EvenementController {
 	
 	@PutMapping("/add-participation/{event-id}/{user-id}")
 	@ResponseBody
-	public void addParticipation(@PathVariable("event-id") Long IdEv, @PathVariable("user-id") Long IdUser)
+	public Boolean addParticipation(@PathVariable("event-id") Long IdEv, @PathVariable("user-id") Long IdUser)
 	{
-		evenementServiceImpl.participation(IdEv, IdUser);
+		return evenementServiceImpl.participation(IdEv, IdUser);
 	}
 	
 	@PutMapping("/annuler-participation/{participation-id}")
 	@ResponseBody
-	public void annulerParticipation(@PathVariable("participation-id") Long IdPart)
+	public Boolean annulerParticipation(@PathVariable("participation-id") Long IdPart)
 	{
-		participationServiceImpl.annulerParticipation(IdPart);
+		return participationServiceImpl.annulerParticipation(IdPart);
 	}
 	
 	@PutMapping("/annuler-participation/{event-id}/{user-id}")
 	@ResponseBody
-	public void annulerParticip(@PathVariable("event-id") Long IdEv, @PathVariable("user-id") Long IdUser)
+	public Boolean annulerParticip(@PathVariable("event-id") Long IdEv, @PathVariable("user-id") Long IdUser)
 	{
-		participationServiceImpl.annulerParticipEvent(IdEv,IdUser);
+		return participationServiceImpl.annulerParticipEvent(IdEv,IdUser);
 	}
 	
 	@DeleteMapping("/remove-event/{event-id}")
