@@ -1,5 +1,6 @@
 package tn.esprit.asi.services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +41,18 @@ public class ParticipationServiceImpl implements ParticipationService {
 	}
 
 	@Override
-	public void annulerParticipation(Long idParticipation) {
+	public Boolean annulerParticipation(Long idParticipation) {
 		Participation participation= participationRepo.findById(idParticipation).get();
-		if(participation.getMontantPaye()==null || participation.getMontantPaye()<=0) {
-			participationRepo.delete(participation);
-		}else {
-			participation.setAnnulation(true);
-			participationRepo.save(participation);
+		if(new Date().before(participation.getEvenementPart().getDateDebut())) {
+			if(participation.getMontantPaye()==null || participation.getMontantPaye()<=0) {
+				participationRepo.delete(participation);
+			}else {
+				participation.setAnnulation(true);
+				participationRepo.save(participation);
+			}
+			return true;
 		}
-		
+		return false;
 	}
 
 	@Override
@@ -74,11 +78,11 @@ public class ParticipationServiceImpl implements ParticipationService {
 	}
 
 	@Override
-	public void annulerParticipEvent(Long idEvent, Long idUser) {
+	public Boolean annulerParticipEvent(Long idEvent, Long idUser) {
 		Evenement ev = evenementServiceImpl.getEventById(idEvent);
 		User u = userRepo.findById(idUser).get();
 		Participation part = participationRepo.retrieveParticipationEvent(ev,u);
-		annulerParticipation(part.getIdParticip());
+		return annulerParticipation(part.getIdParticip());
 	}
 
 }
