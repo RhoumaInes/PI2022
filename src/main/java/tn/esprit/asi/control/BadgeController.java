@@ -3,6 +3,7 @@ package tn.esprit.asi.control;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +49,12 @@ public class BadgeController {
 	public Badge getBadgeByUser(@PathVariable("user-id") Long userId) {
 		User user = userRepo.findById(userId).orElse(null);
 		return badgeService.getBadgeByUser(user);
+	}
+
+	@DeleteMapping("/deleteBadge/{badgeId}")
+	@ResponseBody
+	public void deleteBadge(@PathVariable("badgeId") Long badgeId) {
+		badgeService.deleteBadge(badgeId);
 	}
 
 }
